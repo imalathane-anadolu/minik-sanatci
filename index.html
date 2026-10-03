@@ -10,47 +10,35 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #fdfbf7; color: #333; text-align: center; padding: 10px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         
-        /* Tüm Uygulama Çerçevesi */
-        #appContainer { background: #fdfbf7; padding: 10px; width: 100%; max-width: 850px; margin: 0 auto; border-radius: 20px; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        /* Tüm Uygulama Çerçevesi (Varsayılan Dikey Düzen: Üstte Tuval, Altta Menüler) */
+        #appContainer { background: #fdfbf7; padding: 10px; width: 100%; max-width: 500px; margin: 0 auto; border-radius: 20px; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 
-        /* Tam Ekran Modu - Cihazın Yönüne Göre Akıllı Düzen (Responsive) */
+        /* Tam Ekran Modu / Yatay Çevrildiğinde Yan Yana Düzen */
         #appContainer:fullscreen {
             width: 100vw;
             height: 100vh;
             max-width: none;
             background: #fdfbf7;
-            padding: 10px;
+            padding: 15px;
             display: flex;
+            flex-direction: row;
             justify-content: center;
             align-items: center;
+            gap: 20px;
             overflow: hidden;
-            gap: 15px;
         }
         #appContainer:-webkit-full-screen {
             width: 100vw;
             height: 100vh;
             max-width: none;
             background: #fdfbf7;
-            padding: 10px;
+            padding: 15px;
             display: flex;
+            flex-direction: row;
             justify-content: center;
             align-items: center;
+            gap: 20px;
             overflow: hidden;
-            gap: 15px;
-        }
-
-        /* Tam ekranda Yatay (Landscape) ise Yan Yana */
-        @media (orientation: landscape) {
-            #appContainer:fullscreen {
-                flex-direction: row;
-            }
-        }
-        /* Tam ekranda Dikey (Portrait) ise Alt Alta düzgün yerleşim */
-        @media (orientation: portrait) {
-            #appContainer:fullscreen {
-                flex-direction: column;
-                overflow-y: auto;
-            }
         }
 
         /* Başlık Alanı */
@@ -59,9 +47,13 @@
         p { color: #555; font-size: 11px; }
         #appContainer:fullscreen header { display: none; } /* Tam ekranda alanı korumak için gizlenir */
 
-        /* Sol Menü Paneli */
-        .left-control-panel { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 340px; gap: 10px; }
-        #appContainer:fullscreen .left-control-panel { max-height: 95vh; overflow-y: auto; padding-right: 5px; }
+        /* Sol/Üst Kontrol Paneli */
+        .left-control-panel { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 440px; gap: 10px; order: 2; }
+        #appContainer:fullscreen .left-control-panel { max-height: 95vh; overflow-y: auto; padding-right: 5px; order: 1; max-width: 320px; }
+
+        /* Sağ/Üst Tuval Paneli */
+        .right-canvas-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 460px; order: 1; }
+        #appContainer:fullscreen .right-canvas-panel { order: 2; width: auto; }
 
         /* Bölüm Kutuları */
         .section { background: white; padding: 10px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; }
@@ -93,13 +85,10 @@
         .tool-btn.fullscreen { background: #3f51b5; }
         .tool-btn.clear { background: #e53935; }
 
-        /* Sağ Tuval Paneli */
-        .right-canvas-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 500px; }
+        /* Tuval Alanı */
         .canvas-container { position: relative; display: flex; justify-content: center; width: 100%; }
-        
-        canvas { background: #fff; border: 3px dashed #ffb74d; border-radius: 15px; touch-action: none; cursor: crosshair; display: block; max-width: 100%; height: auto; }
-        
-        #appContainer:fullscreen canvas { border: 3px solid #ffb74d; max-height: 80vh; width: auto; }
+        canvas { background: #fff; border: 3px dashed #ffb74d; border-radius: 15px; touch-action: none; cursor: crosshair; display: block; width: 100%; max-width: 440px; height: 300px; }
+        #appContainer:fullscreen canvas { max-width: none; width: 62vw; height: 82vh; border: 3px solid #ffb74d; }
 
         /* Çocuk İsmi Girişi */
         input[type="text"] { padding: 6px; font-size: 13px; border: 2px solid #ffcc80; border-radius: 12px; width: 100%; margin: 4px 0; text-align: center; font-weight: bold; color: #ff5722; background: #fffdf9; }
@@ -109,7 +98,7 @@
         .btn:hover { transform: scale(1.02); }
         .btn.boyama1 { background: #4caf50; }
         .btn.boyama2 { background: #ff9800; }
-        .btn.indir { background: #e91e63; max-width: 400px; font-size: 13px; }
+        .btn.indir { background: #e91e63; font-size: 13px; width: 100%; }
 
         .library-section { background: white; padding: 10px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; }
         #appContainer:fullscreen .library-section { display: none; }
@@ -119,15 +108,26 @@
 
     <div id="appContainer">
 
-        <!-- Sol Kontrol Paneli -->
-        <div class="left-control-panel">
-            <header>
-                <h1>🎨 Minik Sanatçı</h1>
-                <p>Eğlenceli Boyama Dünyası</p>
-            </header>
+        <!-- Başlık -->
+        <header>
+            <h1>🎨 Minik Sanatçı</h1>
+            <p>Eğlenceli Boyama Dünyası</p>
+        </header>
 
+        <!-- Sağ/Üst Tuval Paneli (Dikeyde En Üstte Görünür) -->
+        <div class="right-canvas-panel">
+            <div class="canvas-container" id="canvasContainer">
+                <canvas id="paintCanvas" width="440" height="300"></canvas>
+            </div>
+            <div style="width: 100%; margin-top: 8px;">
+                <button class="btn indir" onclick="downloadImage()">📸 Boyadığımı İndir & Kutla 🎉</button>
+            </div>
+        </div>
+
+        <!-- Sol/Alt Kontrol Paneli ve Kitaplar -->
+        <div class="left-control-panel">
             <div class="section">
-                <h2>✨ Boyama Tuvali</h2>
+                <h2>✨ Boyama Araçları</h2>
                 
                 <!-- Şablon Seçimi -->
                 <div class="template-group">
@@ -175,19 +175,10 @@
             <div class="library-section">
                 <h2>📚 Boyama Kitapları</h2>
                 <div class="tools" style="margin-top: 5px;">
-                    <a href="boyama-kitap-01.pdf" class="btn boyama1" target="_blank" style="width: 48%; font-size: 11px; padding: 6px;">🖍️ Kitap 1</a>
-                    <a href="boyama-kitap-02.pdf" class="btn boyama2" target="_blank" style="width: 48%; font-size: 11px; padding: 6px;">🖍️ Kitap 2</a>
+                    <a href="boyama-kitap-01.pdf" class="btn boyama1" target="_blank" style="width: 48%; font-size: 11px; padding: 6px; margin:0;">🖍️ Kitap 1</a>
+                    <a href="boyama-kitap-02.pdf" class="btn boyama2" target="_blank" style="width: 48%; font-size: 11px; padding: 6px; margin:0;">🖍️ Kitap 2</a>
                 </div>
             </div>
-        </div>
-
-        <!-- Sağ Tuval Paneli -->
-        <div class="right-canvas-panel">
-            <div class="canvas-container" id="canvasContainer">
-                <canvas id="paintCanvas" width="460" height="310"></canvas>
-            </div>
-            <br>
-            <button class="btn indir" onclick="downloadImage()">📸 Boyadığımı İndir & Kutla 🎉</button>
         </div>
 
     </div>
@@ -206,8 +197,8 @@
         let historyStepIndex = -1;
 
         let userCanvas = document.createElement('canvas');
-        userCanvas.width = 460;
-        userCanvas.height = 310;
+        userCanvas.width = 440;
+        userCanvas.height = 300;
         let userCtx = userCanvas.getContext('2d');
 
         function playPopSound() {
@@ -265,41 +256,41 @@
             ctx.strokeStyle = '#333';
 
             if (currentTemplate === 'house') {
-                ctx.beginPath(); ctx.arc(75, 45, 20, 0, Math.PI * 2); ctx.fillStyle = '#fff9c4'; ctx.fill(); ctx.stroke();
-                ctx.beginPath(); ctx.arc(355, 50, 13, 0, Math.PI * 2); ctx.arc(375, 50, 17, 0, Math.PI * 2); ctx.arc(395, 50, 13, 0, Math.PI * 2); ctx.stroke();
-                ctx.strokeRect(150, 110, 160, 110);
-                ctx.beginPath(); ctx.moveTo(125, 110); ctx.lineTo(230, 45); ctx.lineTo(335, 110); ctx.closePath(); ctx.stroke();
-                ctx.strokeRect(205, 160, 50, 60);
-                ctx.strokeRect(170, 130, 30, 30);
-                ctx.strokeRect(260, 130, 30, 30);
+                ctx.beginPath(); ctx.arc(70, 45, 18, 0, Math.PI * 2); ctx.fillStyle = '#fff9c4'; ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(345, 45, 12, 0, Math.PI * 2); ctx.arc(365, 45, 15, 0, Math.PI * 2); ctx.arc(385, 45, 12, 0, Math.PI * 2); ctx.stroke();
+                ctx.strokeRect(140, 105, 160, 110);
+                ctx.beginPath(); ctx.moveTo(115, 105); ctx.lineTo(220, 40); ctx.lineTo(325, 105); ctx.closePath(); ctx.stroke();
+                ctx.strokeRect(195, 155, 50, 60);
+                ctx.strokeRect(160, 125, 30, 30);
+                ctx.strokeRect(250, 125, 30, 30);
             } else if (currentTemplate === 'cat') {
-                ctx.beginPath(); ctx.arc(230, 140, 65, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(180, 95); ctx.lineTo(170, 45); ctx.lineTo(215, 85); ctx.closePath(); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(280, 95); ctx.lineTo(290, 45); ctx.lineTo(245, 85); ctx.closePath(); ctx.stroke();
-                ctx.beginPath(); ctx.arc(205, 125, 7, 0, Math.PI * 2); ctx.fillStyle = '#333'; ctx.fill();
-                ctx.beginPath(); ctx.arc(255, 125, 7, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.arc(230, 145, 4, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.moveTo(170, 150); ctx.lineTo(130, 142); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(170, 162); ctx.lineTo(130, 165); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(290, 150); ctx.lineTo(330, 142); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(290, 162); ctx.lineTo(330, 165); ctx.stroke();
+                ctx.beginPath(); ctx.arc(220, 135, 60, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(175, 95); ctx.lineTo(165, 45); ctx.lineTo(210, 85); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(265, 95); ctx.lineTo(275, 45); ctx.lineTo(230, 85); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(195, 120, 6, 0, Math.PI * 2); ctx.fillStyle = '#333'; ctx.fill();
+                ctx.beginPath(); ctx.arc(245, 120, 6, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(220, 140, 4, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(165, 145); ctx.lineTo(125, 137); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(165, 157); ctx.lineTo(125, 160); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(275, 145); ctx.lineTo(315, 137); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(275, 157); ctx.lineTo(315, 160); ctx.stroke();
             } else if (currentTemplate === 'rocket') {
-                ctx.beginPath(); ctx.arc(230, 105, 35, Math.PI, 0, false); ctx.lineTo(265, 180); ctx.lineTo(195, 180); ctx.closePath(); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(195, 145); ctx.lineTo(165, 180); ctx.lineTo(195, 180); ctx.closePath(); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(265, 145); ctx.lineTo(295, 180); ctx.lineTo(265, 180); ctx.closePath(); ctx.stroke();
-                ctx.beginPath(); ctx.arc(230, 100, 12, 0, Math.PI * 2); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(215, 180); ctx.lineTo(230, 215); ctx.lineTo(245, 180); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(220, 100, 35, Math.PI, 0, false); ctx.lineTo(255, 175); ctx.lineTo(185, 175); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(185, 140); ctx.lineTo(155, 175); ctx.lineTo(185, 175); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(255, 140); ctx.lineTo(285, 175); ctx.lineTo(255, 175); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(220, 95, 12, 0, Math.PI * 2); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(205, 175); ctx.lineTo(220, 210); ctx.lineTo(235, 175); ctx.closePath(); ctx.stroke();
             }
 
             const nameInput = document.getElementById('childName').value.trim().toUpperCase();
             const displayName = nameInput !== "" ? nameInput : "SANATÇI";
             
-            ctx.font = "bold 26px Arial";
+            ctx.font = "bold 24px Arial";
             ctx.textAlign = "center";
             ctx.lineWidth = 1.5;
             ctx.strokeStyle = "#333";
             ctx.fillStyle = "rgba(0,0,0,0)";
-            ctx.strokeText(displayName, canvas.width / 2, 275);
+            ctx.strokeText(displayName, canvas.width / 2, 268);
         }
 
         function redrawEverything() {
@@ -309,10 +300,10 @@
         }
 
         function initCanvas() {
-            userCanvas.width = 460;
-            userCanvas.height = 310;
-            canvas.width = 460;
-            canvas.height = 310;
+            userCanvas.width = 440;
+            userCanvas.height = 300;
+            canvas.width = 440;
+            canvas.height = 300;
             
             resetUserCanvas();
             userCtx.lineWidth = 3;
