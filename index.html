@@ -33,7 +33,7 @@
             justify-content: flex-start;
             min-height: 100vh;
             overflow-x: hidden;
-            padding: 10px;
+            padding: 6px;
         }
 
         /* Ekran Yönetimi */
@@ -112,30 +112,29 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 8px;
         }
 
         .back-btn {
             background-color: #ffa502;
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 1.1rem;
-            border-radius: 15px;
+            padding: 6px 14px;
+            font-size: 0.9rem;
+            border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 4px 0 #e67e22;
+            box-shadow: 0 3px 0 #e67e22;
             font-weight: bold;
         }
 
         .back-btn:active {
-            transform: translateY(4px);
+            transform: translateY(3px);
             box-shadow: none;
         }
 
         .section-title {
-            font-size: 1.8rem;
+            font-size: 1.3rem;
             color: #2f3542;
-            margin-bottom: 15px;
         }
 
         .templates-grid {
@@ -204,18 +203,18 @@
             width: 100%;
             max-width: 650px;
             background: white;
-            padding: 15px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 8px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
         .canvas-wrapper {
             position: relative;
             width: 100%;
-            aspect-ratio: 4 / 3;
+            height: 62vh; /* Çizim alanı büyütüldü, parmakla rahat çizim için optimize edildi */
             background: #ffffff;
-            border: 4px solid #dfe4ea;
-            border-radius: 15px;
+            border: 3px solid #dfe4ea;
+            border-radius: 12px;
             overflow: hidden;
             touch-action: none;
             cursor: crosshair;
@@ -234,17 +233,17 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 4px;
+            margin-top: 6px;
             width: 100%;
         }
 
         .tool-btn {
             background: #f1f2f6;
             border: 2px solid #ced6e0;
-            border-radius: 12px;
-            padding: 8px 15px;
-            font-size: 1rem;
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 0.85rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
@@ -261,17 +260,17 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
-            margin-top: 15px;
+            gap: 5px;
+            margin-top: 6px;
             max-width: 100%;
         }
 
         .color-swatch {
-            width: 35px;
-            height: 35px;
+            width: 27px;
+            height: 27px;
             border-radius: 50%;
-            border: 3px solid #fff;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
             cursor: pointer;
             transition: transform 0.1s;
         }
@@ -288,8 +287,8 @@
         /* Eylem Butonları */
         .action-bar {
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 6px;
+            margin-top: 6px;
             width: 100%;
             justify-content: center;
         }
@@ -298,27 +297,27 @@
             background: #2ed573;
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
+            padding: 6px 12px;
+            font-size: 0.85rem;
             font-weight: bold;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
-            box-shadow: 0 4px 0 #26af5f;
+            box-shadow: 0 2px 0 #26af5f;
         }
 
         .action-btn:active {
-            transform: translateY(4px);
+            transform: translateY(2px);
             box-shadow: none;
         }
 
         .action-btn.clear {
             background: #ff4757;
-            box-shadow: 0 4px 0 #ff3838;
+            box-shadow: 0 2px 0 #ff3838;
         }
 
         .action-btn.fullscreen {
             background: #3742fa;
-            box-shadow: 0 4px 0 #2f3542;
+            box-shadow: 0 2px 0 #2f3542;
         }
     </style>
 </head>
@@ -337,9 +336,9 @@
     <!-- 2. BOYAMA KİTAPLARI EKRANI (PDFLER) -->
     <div id="books-screen" class="screen">
         <div class="header-bar">
-            <button class="back-btn" onclick="openScreen('home-screen')">⬅️ Ana Sayfa</button>
+            <button class="back-btn" onclick="openScreen('home-screen')">⬅ Ana Sayfa</button>
             <h2 class="section-title" style="margin:0;">Boyama Kitapları</h2>
-            <div style="width: 80px;"></div>
+            <div style="width: 70px;"></div>
         </div>
         <div class="templates-grid">
             <!-- 1. Kitap -->
@@ -362,7 +361,7 @@
         <div class="header-bar">
             <button class="back-btn" onclick="openScreen('home-screen')">⬅️ Ana Sayfa</button>
             <h2 class="section-title" id="canvas-title" style="margin:0;">Kendin Çiz</h2>
-            <div style="width: 80px;"></div>
+            <div style="width: 70px;"></div>
         </div>
 
         <div class="app-container">
@@ -377,9 +376,9 @@
                 <button class="tool-btn" id="tool-stamp" onclick="setTool('stamp')">⭐ Damga</button>
                 <button class="tool-btn" id="tool-eraser" onclick="setTool('eraser')">🧹 Silgi</button>
                 <select id="brush-size" class="tool-btn" onchange="changeSize(this.value)">
-                    <option value="5">İnce</option>
-                    <option value="12" selected>Orta</option>
-                    <option value="25">Kalın</option>
+                    <option value="4">İnce</option>
+                    <option value="10" selected>Orta</option>
+                    <option value="20">Kalın</option>
                 </select>
             </div>
 
@@ -390,7 +389,7 @@
 
             <!-- Eylem Butonları -->
             <div class="action-bar">
-                <button class="action-btn clear" onclick="clearCanvas()">🗑️️ Temizle</button>
+                <button class="action-btn clear" onclick="clearCanvas()">🗑️ Temizle</button>
                 <button class="action-btn fullscreen" onclick="toggleFullScreen()">📺 Tam Ekran</button>
                 <button class="action-btn" onclick="saveImage()">💾 Kaydet</button>
             </div>
@@ -402,6 +401,9 @@
         function openScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
+            if(screenId === 'app-screen') {
+                setTimeout(resizeCanvas, 50);
+            }
         }
 
         // --- PDF AÇMA ---
@@ -422,7 +424,7 @@
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
         let currentTool = 'brush';
         let currentColor = '#ff4757';
-        let currentSize = 12;
+        let currentSize = 10;
         let isDrawing = false;
         let lastX = 0;
         let lastY = 0;
@@ -452,14 +454,28 @@
 
         function startDrawingApp() {
             openScreen('app-screen');
-            resizeCanvas();
-            clearCanvas();
+            setTimeout(() => {
+                resizeCanvas();
+                clearCanvas();
+            }, 50);
         }
 
         function resizeCanvas() {
             const wrapper = document.getElementById('canvas-wrapper');
-            canvas.width = wrapper.clientWidth;
-            canvas.height = wrapper.clientHeight;
+            if (canvas.width !== wrapper.clientWidth || canvas.height !== wrapper.clientHeight) {
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = canvas.width;
+                tempCanvas.height = canvas.height;
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCtx.drawImage(canvas, 0, 0);
+
+                canvas.width = wrapper.clientWidth;
+                canvas.height = wrapper.clientHeight;
+
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(tempCanvas, 0, 0);
+            }
         }
 
         function setTool(tool) {
@@ -611,7 +627,6 @@
             link.href = canvas.toDataURL();
             link.click();
 
-            // Kutlama Konfeti Efekti
             confetti({
                 particleCount: 120,
                 spread: 70,
@@ -629,7 +644,6 @@
             }
         }
 
-        // Başlangıç Ayarı
         window.onload = () => {
             initPalette();
         };
