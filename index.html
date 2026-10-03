@@ -11,7 +11,7 @@
         body { background: #121214; color: #e1e1e6; text-align: center; padding: 10px; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
         /* Pro Stüdyo Çerçevesi */
-        #appContainer { background: #202024; padding: 12px; width: 100%; max-width: 520px; margin: 0 auto; border-radius: 24px; box-shadow: 0 16px 32px rgba(0,0,0,0.5); border: 1px solid #323238; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        #appContainer { background: #202024; padding: 14px; width: 100%; max-width: 520px; margin: 0 auto; border-radius: 24px; box-shadow: 0 16px 32px rgba(0,0,0,0.5); border: 1px solid #323238; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 14px; }
 
         /* Tam Ekran / Yatay Profesyonel Mod */
         #appContainer:fullscreen { width: 100vw; height: 100vh; max-width: none; background: #121214; padding: 20px; border-radius: 0; border: none; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 24px; }
@@ -21,20 +21,24 @@
         header { background: linear-gradient(135deg, #7c3aed, #db2777); padding: 12px; border-radius: 16px; width: 100%; box-shadow: 0 4px 12px rgba(124,58,237,0.3); }
         h1 { color: #fff; font-size: 20px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 2px; }
         p { color: #f3e8ff; font-size: 11px; font-weight: 500; opacity: 0.9; }
-        #appContainer:fullscreen header { display: none; }
-
-        /* Paneller */
-        .left-control-panel { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 460px; gap: 10px; order: 2; }
-        #appContainer:fullscreen .left-control-panel { max-height: 96vh; overflow-y: auto; padding-right: 6px; order: 1; max-width: 340px; }
-        #appContainer:fullscreen .left-control-panel::-webkit-scrollbar { width: 6px; }
-        #appContainer:fullscreen .left-control-panel::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
-
-        .right-canvas-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 480px; order: 1; }
-        #appContainer:fullscreen .right-canvas-panel { order: 2; width: auto; }
 
         /* Stüdyo Kartları */
         .section { background: #29292e; padding: 12px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 100%; border: 1px solid #323238; }
         .section h2 { color: #e1e1e6; font-size: 13px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Kitaplık En Üstte */
+        .library-section { background: #29292e; padding: 12px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 100%; border: 1px solid #323238; order: 1; }
+        #appContainer:fullscreen .library-section { display: none; }
+
+        /* Tuval Alanı Ortada */
+        .right-canvas-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 480px; order: 2; }
+        #appContainer:fullscreen .right-canvas-panel { order: 2; width: auto; }
+
+        /* Kontrol Paneli En Altta */
+        .left-control-panel { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 460px; gap: 12px; order: 3; }
+        #appContainer:fullscreen .left-control-panel { max-height: 96vh; overflow-y: auto; padding-right: 6px; order: 1; max-width: 340px; }
+        #appContainer:fullscreen .left-control-panel::-webkit-scrollbar { width: 6px; }
+        #appContainer:fullscreen .left-control-panel::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
 
         /* Şablonlar */
         .template-group { display: flex; justify-content: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
@@ -78,23 +82,28 @@
         .btn.boyama1 { background: #0284c7; box-shadow: 0 4px 14px rgba(2,132,199,0.4); }
         .btn.boyama2 { background: #d97706; box-shadow: 0 4px 14px rgba(217,119,6,0.4); }
         .btn.indir { background: linear-gradient(135deg, #059669, #10b981); font-size: 14px; }
-
-        .library-section { background: #29292e; padding: 12px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 100%; border: 1px solid #323238; }
-        #appContainer:fullscreen .library-section { display: none; }
     </style>
 </head>
 <body>
 
     <div id="appContainer">
 
-        <!-- Başlık -->
-        <header>
-            <h1>🎨 Minik Sanatçı</h1>
-            <p>Pro Studio & Coloring Suite</p>
-        </header>
+        <!-- En Üst: Boyama Kitapları Menüsü ve Kocaman Sevimli İkon -->
+        <div class="library-section">
+            <h2>📚 Boyama Kitapları</h2>
+            <div style="font-size: 32px; margin: 4px 0;">🧸🎨✨</div>
+            <div class="tools" style="margin-top: 6px;">
+                <a href="boyama-kitap-01.pdf" class="btn boyama1" target="_blank" style="width: 48%; font-size: 11px; padding: 7px; margin:0;">🖍️ Kitap 1 İndir</a>
+                <a href="boyama-kitap-02.pdf" class="btn boyama2" target="_blank" style="width: 48%; font-size: 11px; padding: 7px; margin:0;">🖍️ Kitap 2 İndir</a>
+            </div>
+        </div>
 
-        <!-- Sağ / Üst Tuval Alanı -->
+        <!-- Orta: Resim Ekranı / Kendin Çiz Alanı -->
         <div class="right-canvas-panel">
+            <header style="margin-bottom: 8px;">
+                <h1>🎨 Kendin Çiz & Boya</h1>
+                <p>Hayal Gücünü Tuvale Yansit</p>
+            </header>
             <div class="canvas-container" id="canvasContainer">
                 <canvas id="paintCanvas" width="460" height="310"></canvas>
             </div>
@@ -103,7 +112,7 @@
             </div>
         </div>
 
-        <!-- Sol / Alt Kontrol Paneli -->
+        <!-- Alt: Boyama ve Çizim Menüsü -->
         <div class="left-control-panel">
             <div class="section">
                 <h2>✨ Çizim İstasyonu</h2>
@@ -135,10 +144,10 @@
                     <button class="tool-btn undo-redo" onclick="redoAction()">🔁 İleri</button>
                 </div>
                 
-                <!-- Gelişmiş Araçlar -->
+                <!-- Gelişmiş Araçlar (Damla Fonksiyonu Düzeltildi ve Güncellendi) -->
                 <div class="tools">
                     <button class="tool-btn bucket" id="bucketBtn" onclick="enableBucket()">🪣 Dolgu</button>
-                    <button class="tool-btn eyedropper" id="eyedropperBtn" onclick="enableEyedropper()">💧 Damla</button>
+                    <button class="tool-btn eyedropper" id="eyedropperBtn" onclick="enableEyedropper()">🎨 Renk Seç</button>
                     <button class="tool-btn stamp" onclick="enableStamp('⭐')">⭐ Yıldız</button>
                     <button class="tool-btn stamp" onclick="enableStamp('❤️')">❤️ Kalp</button>
                     <button class="tool-btn eraser" onclick="enableEraser()">🧽 Silgi</button>
@@ -151,15 +160,6 @@
 
                 <!-- Sanatçı İmzası -->
                 <input type="text" id="childName" placeholder="Sanatçının Adı" oninput="redrawEverything()">
-            </div>
-
-            <!-- Boyama Kitapları Kütüphanesi -->
-            <div class="library-section">
-                <h2>📚 Boyama Kitapları</h2>
-                <div class="tools" style="margin-top: 6px;">
-                    <a href="boyama-kitap-01.pdf" class="btn boyama1" target="_blank" style="width: 48%; font-size: 11px; padding: 7px; margin:0;">🖍️ Kitap 1</a>
-                    <a href="boyama-kitap-02.pdf" class="btn boyama2" target="_blank" style="width: 48%; font-size: 11px; padding: 7px; margin:0;">🖍️ Kitap 2</a>
-                </div>
             </div>
         </div>
 
@@ -398,7 +398,6 @@
         function pickColor(x, y) {
             redrawEverything();
             const pixel = ctx.getImageData(x, y, 1, 1).data;
-            if (pixel[0] < 40 && pixel[1] < 40 && pixel[2] < 40) return;
             
             const hex = "#" + ((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2]).toString(16).slice(1);
             currentColor = hex;
