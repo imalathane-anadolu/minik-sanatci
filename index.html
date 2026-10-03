@@ -36,12 +36,13 @@
         .tool-btn.size-btn.active-size { background: #263238; border: 2px solid #ffeb3b; }
         .tool-btn.eraser { background: #78909c; }
         .tool-btn.bucket { background: #00acc1; }
+        .tool-btn.bucket.active-bucket { background: #006064; border: 2px solid #ffeb3b; }
         .tool-btn.clear { background: #e53935; }
 
         /* Tuval Alanı */
         canvas { background: #fff; border: 3px dashed #ffb74d; border-radius: 15px; width: 100%; max-width: 360px; height: 280px; touch-action: none; cursor: crosshair; display: block; margin: 0 auto; }
         
-        /* İsim Girişi (Resmin İçine İşlenmesi İçin) */
+        /* İsim Girişi */
         input[type="text"] { padding: 10px; font-size: 15px; border: 2px solid #ffcc80; border-radius: 15px; width: 90%; max-width: 340px; margin: 10px 0 5px 0; text-align: center; font-weight: bold; color: #ff5722; background: #fffdf9; }
         
         /* Genel Butonlar */
@@ -85,18 +86,18 @@
 
         <!-- Araçlar ve Kalem Kalınlıkları -->
         <div class="tools">
-            <button class="tool-btn size-btn active-size" id="sizeThin" onclick="setLineWidth(4, this)">✏️️ İnce Kalem</button>
-            <button class="tool-btn size-btn" id="sizeNormal" onclick="setLineWidth(10, this)">🖊️ Normal</button>
-            <button class="tool-btn size-btn" id="sizeThick" onclick="setLineWidth(18, this)">🖌️️ Kalın</button>
+            <button class="tool-btn size-btn active-size" id="sizeThin" onclick="setLineWidth(3, this)">✏️ İnce Kalem</button>
+            <button class="tool-btn size-btn" id="sizeNormal" onclick="setLineWidth(8, this)">🖊️ Normal</button>
+            <button class="tool-btn size-btn" id="sizeThick" onclick="setLineWidth(15, this)">🖌️ Kalın</button>
         </div>
         <div class="tools">
-            <button class="tool-btn bucket" onclick="enableBucket()">🪣 Dolgu</button>
+            <button class="tool-btn bucket" id="bucketBtn" onclick="enableBucket()">🪣 Dolgu</button>
             <button class="tool-btn eraser" onclick="enableEraser(this)">🧽 Silgi</button>
-            <button class="tool-btn clear" onclick="clearCanvas()">🗑 Temizle</button>
+            <button class="tool-btn clear" onclick="clearCanvas()">🗑️ Temizle</button>
         </div>
 
-        <!-- Çocuğun İsmini Yazdığı Alan (Resmin içine basılacak) -->
-        <input type="text" id="childName" placeholder="Adını Yaz (Harflerini Boya!)" oninput="drawTemplate()">
+        <!-- Çocuğun İsmi (Resmin İçine İşlenir) -->
+        <input type="text" id="childName" placeholder="Adını Yaz (Harflerini Boya!)" oninput="redrawEverything()">
 
         <!-- Tuval -->
         <canvas id="paintCanvas" width="360" height="280"></canvas>
@@ -120,9 +121,15 @@
         const ctx = canvas.getContext('2d');
         let painting = false;
         let currentColor = '#ff5722';
-        let currentLineWidth = 4; // Varsayılan ince kalem
+        let currentLineWidth = 3; 
         let currentTemplate = 'house';
         let isBucketMode = false;
+
+        // Kullanıcının yaptığı boyamaları korumak için offscreen tuval katmanı
+        let userCanvas = document.createElement('canvas');
+        userCanvas.width = 360;
+        userCanvas.height = 280;
+        let userCtx = userCanvas.getContext('2d');
 
         function playPopSound() {
             try {
@@ -141,20 +148,17 @@
             } catch(e) {}
         }
 
-        function drawTemplate() {
-            ctx.fillStyle = '#fff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Çerçeve
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = '#ccc';
-            ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+        function resetUserCanvas() {
+            userCtx.fillStyle = '#fff';
+            userCtx.fillRect(0, 0, userCanvas.width, userCanvas.height);
+        }
+        resetUserCanvas();
 
+        function drawTemplateLines() {
             ctx.lineWidth = 3;
             ctx.strokeStyle = '#333';
 
             if (currentTemplate === 'house') {
-                // Zenginleştirilmiş Ev Şablonu
                 // Güneş
                 ctx.beginPath(); ctx.arc(60, 50, 20, 0, Math.PI * 2); ctx.fillStyle = '#fff9c4'; ctx.fill(); ctx.stroke();
                 // Bulut
@@ -169,7 +173,6 @@
                 ctx.strokeRect(142, 125, 20, 20);
                 ctx.strokeRect(198, 125, 20, 20);
             } else if (currentTemplate === 'cat') {
-                // Zenginleştirilmiş Kedi Şablonu
                 ctx.beginPath(); ctx.arc(180, 130, 55, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.stroke();
                 // Kulaklar
                 ctx.beginPath(); ctx.moveTo(140, 95); ctx.lineTo(135, 45); ctx.lineTo(170, 80); ctx.closePath(); ctx.stroke();
@@ -184,7 +187,6 @@
                 ctx.beginPath(); ctx.moveTo(225, 140); ctx.lineTo(255, 135); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(225, 152); ctx.lineTo(255, 155); ctx.stroke();
             } else if (currentTemplate === 'rocket') {
-                // Zenginleştirilmiş Uzay Roketi Şablonu
                 ctx.beginPath(); ctx.arc(180, 105, 32, Math.PI, 0, false); ctx.lineTo(212, 175); ctx.lineTo(148, 175); ctx.closePath(); ctx.stroke();
                 // Kanatlar
                 ctx.beginPath(); ctx.moveTo(148, 145); ctx.lineTo(122, 175); ctx.lineTo(148, 175); ctx.closePath(); ctx.stroke();
@@ -195,34 +197,50 @@
                 ctx.beginPath(); ctx.moveTo(165, 175); ctx.lineTo(180, 205); ctx.lineTo(195, 175); ctx.closePath(); ctx.stroke();
             }
 
-            // Çocuğun İsmini Resmin İçine (Alt Kısmına) Çizgi Çizgi Harf Olarak Yazdır
+            // Çocuğun İsmi (Harf İçi Boyama İçin)
             const nameInput = document.getElementById('childName').value.trim().toUpperCase();
             const displayName = nameInput !== "" ? nameInput : "SANATÇI";
             
             ctx.font = "bold 22px Arial";
-            ctx.fillStyle = "#ff5722";
             ctx.textAlign = "center";
-            ctx.fillText(displayName, canvas.width / 2, 235);
-            
-            // Harflerin içi boyanabilsin diye dış hat (stroke) efekti verelim
             ctx.lineWidth = 1;
             ctx.strokeStyle = "#333";
             ctx.strokeText(displayName, canvas.width / 2, 235);
         }
-        drawTemplate();
+
+        function redrawEverything() {
+            // Önce kullanıcının boyadığı/doldurduğu katmanı bas
+            ctx.drawImage(userCanvas, 0, 0);
+            // Üstüne siyah şablon çizgilerini ve ismi çiz
+            drawTemplateLines();
+        }
+
+        function initCanvas() {
+            resetUserCanvas();
+            // Dış Çerçeve
+            userCtx.lineWidth = 3;
+            userCtx.strokeStyle = '#ccc';
+            userCtx.strokeRect(10, 10, userCanvas.width - 20, userCanvas.height - 20);
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            redrawEverything();
+        }
+        initCanvas();
 
         function setTemplate(tpl, btn) {
             currentTemplate = tpl;
             isBucketMode = false;
+            document.getElementById('bucketBtn').classList.remove('active-bucket');
             document.querySelectorAll('.tpl-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
-            drawTemplate();
+            initCanvas();
             playPopSound();
         }
 
         function setLineWidth(width, btn) {
             currentLineWidth = width;
             isBucketMode = false;
+            document.getElementById('bucketBtn').classList.remove('active-bucket');
             document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active-size'));
             if(btn) btn.classList.add('active-size');
             playPopSound();
@@ -238,26 +256,93 @@
             return { x: clientX - rect.left, y: clientY - rect.top };
         }
 
+        // Akıllı Flood Fill (Kova Dolgu) Fonksiyonu
+        function floodFill(startX, startY, fillColorHex) {
+            // Tam renk uyumu için şablon çizgilerini de ekrana çizip piksel haritasını alalım
+            redrawEverything();
+            
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imgData.data;
+
+            const startPos = (Math.floor(startY) * canvas.width + Math.floor(startX)) * 4;
+            const startR = pixels[startPos];
+            const startG = pixels[startPos + 1];
+            const startB = pixels[startPos + 2];
+
+            // Çizgiye (siyah) veya aynı renge tıklandıysa dolgu yapma
+            if (startR < 50 && startG < 50 && startB < 50) return;
+
+            // Hex rengini RGB'ye çevir
+            let tempC = document.createElement('canvas').getContext('2d');
+            tempC.fillStyle = fillColorHex;
+            tempC.fillRect(0,0,1,1);
+            let cData = tempC.getImageData(0,0,1,1).data;
+            const targetR = cData[0], targetG = cData[1], targetB = cData[2];
+
+            if (startR === targetR && startG === targetG && startB === targetB) return;
+
+            // UserCanvas üzerinde boyama yapacağız ki şablonlar kaybolmasın
+            const userImgData = userCtx.getImageData(0, 0, userCanvas.width, userCanvas.height);
+            const userPixels = userImgData.data;
+
+            let queue = [[Math.floor(startX), Math.floor(startY)]];
+            let visited = new Uint8Array(canvas.width * canvas.height);
+
+            while (queue.length > 0) {
+                let [x, y] = queue.pop();
+                let idx = (y * canvas.width + x);
+
+                if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) continue;
+                if (visited[idx]) continue;
+                visited[idx] = 1;
+
+                let pIdx = idx * 4;
+                let r = pixels[pIdx], g = pixels[pIdx+1], b = pixels[pIdx+2];
+
+                // Sınırları (siyah çizgileri) kontrol et
+                if (r < 60 && g < 60 && b < 60) continue;
+
+                // Benzer renkleri doldurmak için tolerans
+                if (Math.abs(r - startR) + Math.abs(g - startG) + Math.abs(b - startB) < 60) {
+                    userPixels[pIdx] = targetR;
+                    userPixels[pIdx+1] = targetG;
+                    userPixels[pIdx+2] = targetB;
+                    userPixels[pIdx+3] = 255;
+
+                    // Ana pikselleri de güncelle ki döngü ilerlesin
+                    pixels[pIdx] = targetR;
+                    pixels[pIdx+1] = targetG;
+                    pixels[pIdx+2] = targetB;
+
+                    queue.push([x + 1, y]);
+                    queue.push([x - 1, y]);
+                    queue.push([x, y + 1], [x, y - 1]);
+                }
+            }
+
+            userCtx.putImageData(userImgData, 0, 0);
+            redrawEverything();
+        }
+
         function startAction(e) {
             const pos = getMousePos(e);
+            
             if (isBucketMode) {
-                ctx.fillStyle = currentColor;
-                ctx.fillRect(12, 12, canvas.width - 24, canvas.height - 24);
-                drawTemplate();
-                isBucketMode = false;
+                floodFill(pos.x, pos.y, currentColor);
                 playPopSound();
                 return;
             }
 
             painting = true;
-            ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
+            userCtx.beginPath();
+            userCtx.moveTo(pos.x, pos.y);
             e.preventDefault();
         }
 
         function endPosition() {
+            if (!painting) return;
             painting = false;
-            ctx.beginPath();
+            userCtx.beginPath();
         }
 
         function draw(e) {
@@ -265,15 +350,17 @@
             e.preventDefault();
             const pos = getMousePos(e);
 
-            ctx.lineWidth = currentLineWidth;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.strokeStyle = currentColor;
+            userCtx.lineWidth = currentLineWidth;
+            userCtx.lineCap = 'round';
+            userCtx.lineJoin = 'round';
+            userCtx.strokeStyle = currentColor;
 
-            ctx.lineTo(pos.x, pos.y);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
+            userCtx.lineTo(pos.x, pos.y);
+            userCtx.stroke();
+            userCtx.beginPath();
+            userCtx.moveTo(pos.x, pos.y);
+
+            redrawEverything();
         }
 
         canvas.addEventListener('mousedown', startAction);
@@ -287,6 +374,7 @@
         function selectColor(color, element) {
             currentColor = color;
             isBucketMode = false;
+            document.getElementById('bucketBtn').classList.remove('active-bucket');
             document.querySelectorAll('.color-box').forEach(b => b.classList.remove('active'));
             if(element) element.classList.add('active');
             playPopSound();
@@ -294,20 +382,23 @@
 
         function enableEraser(element) {
             currentColor = '#ffffff';
-            currentLineWidth = 20;
+            currentLineWidth = 18;
             isBucketMode = false;
+            document.getElementById('bucketBtn').classList.remove('active-bucket');
             document.querySelectorAll('.color-box').forEach(b => b.classList.remove('active'));
             playPopSound();
         }
 
         function enableBucket() {
             isBucketMode = true;
+            document.getElementById('bucketBtn').classList.add('active-bucket');
             playPopSound();
         }
 
         function clearCanvas() {
             isBucketMode = false;
-            drawTemplate();
+            document.getElementById('bucketBtn').classList.remove('active-bucket');
+            initCanvas();
             playPopSound();
         }
 
@@ -318,6 +409,7 @@
                 origin: { y: 0.6 }
             });
 
+            redrawEverything();
             const link = document.createElement('a');
             link.download = 'minik-sanatci-boyama.png';
             link.href = canvas.toDataURL('image/png');
