@@ -2,891 +2,681 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minik Sanatçı - 50'li Pro Boyama Arşivi</title>
-    <!-- Profesyonel Kutlama Efekti -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Minik Sanatçı - Çocuk Boyama ve Çizim İstasyonu</title>
+    <!-- Canvas Confetti Kütüphanesi -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: #121214; color: #e1e1e6; text-align: center; padding: 10px; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --accent-color: #ffe66d;
+            --bg-color: #f7f9fc;
+            --text-color: #2d3436;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Bubblegum Sans', 'Arial Rounded MT Bold', sans-serif, cursive;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 10px;
+        }
+
+        /* Ekran Yönetimi */
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 1. GİRİŞ EKRANI (İLK SAYFA) --- */
+        #home-screen {
+            justify-content: center;
+            align-items: center;
+            height: 90vh;
+            text-align: center;
+        }
+
+        .home-title {
+            font-size: 2.8rem;
+            color: #ff4757;
+            text-shadow: 3px 3px 0px #ffeaa7;
+            margin-bottom: 40px;
+        }
+
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 20px;
+        }
+
+        .menu-btn {
+            background-color: #fff;
+            border: 4px solid #ff4757;
+            border-radius: 25px;
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2f3542;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #ff4757;
+            transition: all 0.1s ease;
+        }
+
+        .menu-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #ff4757;
+        }
+
+        .menu-btn:nth-child(1) { border-color: #ff6b6b; box-shadow: 0 8px 0 #ff6b6b; }
+        .menu-btn:nth-child(1):active { box-shadow: 0 2px 0 #ff6b6b; }
         
-        #appContainer { background: #202024; padding: 14px; width: 100%; max-width: 520px; margin: 0 auto; border-radius: 24px; box-shadow: 0 16px 32px rgba(0,0,0,0.5); border: 1px solid #323238; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+        .menu-btn:nth-child(2) { border-color: #2ed573; box-shadow: 0 8px 0 #2ed573; color: #2ed573; }
+        .menu-btn:nth-child(2):active { box-shadow: 0 2px 0 #2ed573; }
 
-        #appContainer:fullscreen { width: 100vw; height: 100vh; max-width: none; background: #121214; padding: 20px; border-radius: 0; border: none; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 24px; }
-        #appContainer:-webkit-full-screen { width: 100vw; height: 100vh; max-width: none; background: #121214; padding: 20px; border-radius: 0; border: none; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 24px; }
+        .menu-btn:nth-child(3) { border-color: #1e90ff; box-shadow: 0 8px 0 #1e90ff; color: #1e90ff; }
+        .menu-btn:nth-child(3):active { box-shadow: 0 2px 0 #1e90ff; }
 
-        header { background: linear-gradient(135deg, #7c3aed, #db2777); padding: 12px; border-radius: 16px; width: 100%; box-shadow: 0 4px 12px rgba(124,58,237,0.3); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-        .header-title-area { text-align: left; }
-        h1 { color: #fff; font-size: 18px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 2px; }
-        p { color: #f3e8ff; font-size: 11px; font-weight: 500; opacity: 0.9; }
+        /* --- 2. BOYAMA KİTAPLARI EKRANI (ŞABLON SEÇİMİ) --- */
+        .header-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-        .section { background: #29292e; padding: 12px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 100%; border: 1px solid #323238; }
-        .section h2 { color: #e1e1e6; font-size: 13px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .back-btn {
+            background-color: #ffa502;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #e67e22;
+            font-weight: bold;
+        }
 
-        .library-section { background: #29292e; padding: 12px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 100%; border: 1px solid #323238; margin-bottom: 12px; }
-        
-        /* Tam ekran modunda boyama kitapları bölümünü gizle */
-        #appContainer:fullscreen .library-section { display: none !important; }
+        .back-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
 
-        .right-canvas-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 480px; order: 2; max-height: 88vh; overflow-y: auto; padding-right: 4px; }
-        #appContainer:fullscreen .right-canvas-panel { order: 2; width: auto; max-height: 96vh; overflow-y: auto; padding-right: 6px; }
-        .right-canvas-panel::-webkit-scrollbar { width: 5px; }
-        .right-canvas-panel::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+        .section-title {
+            font-size: 1.8rem;
+            color: #2f3542;
+            margin-bottom: 15px;
+        }
 
-        .left-control-panel { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 460px; gap: 0px; order: 3; max-height: 88vh; overflow-y: auto; padding-right: 4px; }
-        #appContainer:fullscreen .left-control-panel { max-height: 96vh; overflow-y: auto; padding-right: 6px; order: 1; max-width: 340px; }
-        .left-control-panel::-webkit-scrollbar { width: 5px; }
-        .left-control-panel::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-height: 75vh;
+            overflow-y: auto;
+            padding: 10px;
+        }
 
-        .template-container { max-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 4px; }
-        .template-container::-webkit-scrollbar { width: 5px; }
-        .template-container::-webkit-scrollbar-thumb { background: #4a4a52; border-radius: 3px; }
+        .template-card {
+            background: white;
+            border: 3px solid #ced6e0;
+            border-radius: 15px;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.2s, border-color 0.2s;
+        }
 
-        .template-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
-        .tpl-btn { background: #323238; color: #c4c4cc; border: 1px solid #4a4a52; padding: 6px 8px; font-size: 11px; font-weight: 600; border-radius: 10px; cursor: pointer; transition: 0.2s; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .tpl-btn:hover { background: #3e3e46; color: #fff; }
-        .tpl-btn.active { background: #7c3aed; color: #fff; border-color: #8b5cf6; box-shadow: 0 0 10px rgba(124,58,237,0.4); }
+        .template-card:hover {
+            transform: scale(1.05);
+            border-color: #ff4757;
+        }
 
-        .palette { display: flex; justify-content: center; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
-        .color-box { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2px solid #29292e; box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: 0.2s; }
-        .color-box:hover { transform: scale(1.1); }
-        .color-box.active { border: 3px solid #fff; transform: scale(1.15); box-shadow: 0 0 12px rgba(255,255,255,0.4); }
-        .custom-color-picker { width: 28px; height: 28px; border: none; border-radius: 50%; cursor: pointer; padding: 0; background: none; }
+        .template-card canvas {
+            width: 100%;
+            height: 100px;
+            background: #fff;
+            border-radius: 10px;
+        }
 
-        .tools { margin: 5px 0; display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
-        .tool-btn { background: #323238; color: #e1e1e6; border: 1px solid #4a4a52; padding: 7px 10px; font-size: 11px; font-weight: 700; border-radius: 10px; cursor: pointer; transition: 0.2s; flex: 1; min-width: 65px; }
-        .tool-btn:hover { background: #3e3e46; }
-        
-        .tool-btn.size-btn.active-size { background: #00875f; border-color: #00b37e; color: #fff; }
-        .tool-btn.bucket.active-bucket { background: #00b37e; border-color: #00f0aa; color: #fff; }
-        .tool-btn.eyedropper.active-eyedropper { background: #0284c7; border-color: #38bdf8; color: #fff; }
-        .tool-btn.eraser { background: #c53030; border-color: #e53e3e; color: #fff; }
-        .tool-btn.undo-redo { background: #57534e; }
-        .tool-btn.stamp { background: #db2777; border-color: #f472b6; color: #fff; }
-        .tool-btn.fullscreen { background: #4f46e5; border-color: #6366f1; color: #fff; font-size: 11px; padding: 6px 10px; flex: unset; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-        .tool-btn.clear { background: #7f1d1d; border-color: #991b1b; color: #fff; }
+        .template-card span {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #57606f;
+        }
 
-        .canvas-container { position: relative; display: flex; justify-content: center; width: 100%; border-radius: 16px; overflow: hidden; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-        canvas { touch-action: none; cursor: crosshair; display: block; width: 100%; max-width: 460px; height: 310px; background: #fff; }
-        #appContainer:fullscreen canvas { max-width: none; width: 64vw; height: 84vh; }
+        /* --- 3. ÇİZİM / BOYAMA UYGULAMA EKRANI --- */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 650px;
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
 
-        input[type="text"] { padding: 8px; font-size: 13px; border: 2px solid #3f3f46; border-radius: 12px; width: 100%; margin: 4px 0; text-align: center; font-weight: 700; color: #f43f5e; background: #121214; outline: none; transition: 0.2s; }
-        input[type="text"]:focus { border-color: #7c3aed; box-shadow: 0 0 8px rgba(124,58,237,0.4); }
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background: #ffffff;
+            border: 4px solid #dfe4ea;
+            border-radius: 15px;
+            overflow: hidden;
+            touch-action: none;
+            cursor: crosshair;
+        }
 
-        .btn { background: #00875f; color: white; border: none; padding: 10px 16px; font-size: 13px; font-weight: 700; border-radius: 14px; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 4px 14px rgba(0,135,95,0.4); transition: 0.2s; width: 100%; text-align: center; }
-        .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
-        .btn.boyama1 { background: #0284c7; box-shadow: 0 4px 14px rgba(2,132,199,0.4); }
-        .btn.boyama2 { background: #d97706; box-shadow: 0 4px 14px rgba(217,119,6,0.4); }
-        .btn.indir { background: linear-gradient(135deg, #059669, #10b981); font-size: 14px; }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Araç Çubukları */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .tool-btn {
+            background: #f1f2f6;
+            border: 2px solid #ced6e0;
+            border-radius: 12px;
+            padding: 8px 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tool-btn.active {
+            background: #ff4757;
+            color: white;
+            border-color: #ff6b81;
+        }
+
+        /* Renk Paleti */
+        .palette {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+            max-width: 100%;
+        }
+
+        .color-swatch {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.15);
+        }
+
+        .color-swatch.active {
+            transform: scale(1.25);
+            border-color: #2f3542;
+        }
+
+        /* Eylem Butonları (Kaydet, Tam Ekran vb.) */
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .action-btn {
+            background: #2ed573;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #26af5f;
+        }
+
+        .action-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .action-btn.clear {
+            background: #ff4757;
+            box-shadow: 0 4px 0 #ff3838;
+        }
+
+        .action-btn.fullscreen {
+            background: #3742fa;
+            box-shadow: 0 4px 0 #2f3542;
+        }
     </style>
 </head>
 <body>
 
-    <div id="appContainer">
+    <!-- 1. GİRİŞ EKRANI (İLK SAYFA) -->
+    <div id="home-screen" class="screen active">
+        <h1 class="home-title">🎨 Minik Sanatçı 🖌️</h1>
+        <div class="menu-container">
+            <button class="menu-btn" onclick="openScreen('books-screen')">📚 Boyama Kitapları</button>
+            <button class="menu-btn" onclick="startDrawingApp(null)">✏️ Kendin Çiz</button>
+            <button class="menu-btn" onclick="openSizdenGelenler()">🌟 Sizden Gelenler</button>
+        </div>
+    </div>
 
-        <!-- Sol Kontrol Paneli (Boyama Kitapları Artık En Üstte) -->
-        <div class="left-control-panel">
-            <!-- Boyama Kitapları (PDF) Menüsü En Üstte -->
-            <div class="library-section" style="margin-bottom: 10px;">
-                <h2>📚 Boyama Kitapları</h2>
-                <div style="font-size: 26px; margin: 2px 0;">🧸🎨✨</div>
-                <div class="tools" style="margin-top: 4px;">
-                    <a href="boyama-kitap-01.pdf" class="btn boyama1" target="_blank" style="width: 48%; font-size: 11px; padding: 7px; margin:0;">🖍 Kitap 1 İndir</a>
-                    <a href="boyama-kitap-02.pdf" class="btn boyama2" target="_blank" style="width: 48%; font-size: 11px; padding: 7px; margin:0;">🖍️ Kitap 2 İndir</a>
-                </div>
-            </div>
+    <!-- 2. BOYAMA KİTAPLARI EKRANI (50 ŞABLON) -->
+    <div id="books-screen" class="screen">
+        <div class="header-bar">
+            <button class="back-btn" onclick="openScreen('home-screen')">⬅️ Ana Sayfa</button>
+            <h2 class="section-title" style="margin:0;">Boyama Kitabı Seç</h2>
+            <div style="width: 80px;"></div>
+        </div>
+        <div class="templates-grid" id="templates-grid">
+            <!-- 50 Adet Şablon JavaScript ile Dinamik Eklenecek -->
+        </div>
+    </div>
 
-            <div class="section">
-                <h2>✨ Çizim İstasyonu (50 Şablon)</h2>
-                
-                <div class="template-container" id="templateList"></div>
-
-                <div style="margin-top: 10px;"></div>
-
-                <div class="palette">
-                    <div class="color-box active" style="background: #ef4444;" onclick="selectColor('#ef4444', this)"></div>
-                    <div class="color-box" style="background: #22c55e;" onclick="selectColor('#22c55e', this)"></div>
-                    <div class="color-box" style="background: #3b82f6;" onclick="selectColor('#3b82f6', this)"></div>
-                    <div class="color-box" style="background: #eab308;" onclick="selectColor('#eab308', this)"></div>
-                    <div class="color-box" style="background: #a855f7;" onclick="selectColor('#a855f7', this)"></div>
-                    <div class="color-box" style="background: #ec4899;" onclick="selectColor('#ec4899', this)"></div>
-                    <input type="color" class="custom-color-picker" id="customColorPicker" title="Pro Renk Seçici" value="#ef4444" onchange="selectColor(this.value, null)">
-                </div>
-
-                <div class="tools">
-                    <button class="tool-btn size-btn active-size" onclick="setLineWidth(3, this)">✏️ İnce</button>
-                    <button class="tool-btn size-btn" onclick="setLineWidth(8, this)">🖊️ Normal</button>
-                    <button class="tool-btn size-btn" onclick="setLineWidth(16, this)">🖌 Kalın</button>
-                    <button class="tool-btn undo-redo" onclick="undoAction()">↩️ Geri</button>
-                    <button class="tool-btn undo-redo" onclick="redoAction()">🔁 İleri</button>
-                </div>
-                
-                <div class="tools">
-                    <button class="tool-btn bucket" id="bucketBtn" onclick="enableBucket()">🪣 Dolgu</button>
-                    <button class="tool-btn eyedropper" id="eyedropperBtn" onclick="enableEyedropper()">🎨 Renk Seç</button>
-                    <button class="tool-btn stamp" onclick="enableStamp('⭐')">⭐ Yıldız</button>
-                    <button class="tool-btn stamp" onclick="enableStamp('❤')">❤️ Kalp</button>
-                    <button class="tool-btn eraser" onclick="enableEraser()">🧽 Silgi</button>
-                </div>
-
-                <div class="tools">
-                    <button class="tool-btn clear" onclick="clearCanvas()">🗑️ Sıfırla</button>
-                </div>
-
-                <input type="text" id="childName" placeholder="Sanatçının Adı" oninput="redrawEverything()">
-            </div>
+    <!-- 3. ÇİZİM / BOYAMA UYGULAMA EKRANI -->
+    <div id="app-screen" class="screen">
+        <div class="header-bar">
+            <button class="back-btn" onclick="openScreen('home-screen')">⬅️ Ana Sayfa</button>
+            <h2 class="section-title" id="canvas-title" style="margin:0;">Çizim Alanı</h2>
+            <div style="width: 80px;"></div>
         </div>
 
-        <!-- Sağ Tuval Paneli -->
-        <div class="right-canvas-panel">
-            <header style="margin-bottom: 8px;">
-                <div class="header-title-area">
-                    <h1>🎨 Kendin Çiz & Boya</h1>
-                    <p>50 Farklı Eğlenceli Şablon Arşivi</p>
-                </div>
-                <button class="tool-btn fullscreen" onclick="toggleFullScreen()">⛶ Tam Ekran</button>
-            </header>
-            <div class="canvas-container" id="canvasContainer">
-                <canvas id="paintCanvas" width="460" height="310"></canvas>
+        <div class="app-container">
+            <div class="canvas-wrapper" id="canvas-wrapper">
+                <canvas id="paintCanvas"></canvas>
             </div>
-            <!-- Kaydet / Kutla Butonu Tuvalin Hemen Altında -->
-            <div style="width: 100%; margin-top: 10px;">
-                <button class="btn indir" onclick="downloadImage()">📸 Şaheseri Kaydet & Kutla 🎉</button>
+
+            <!-- Araç Çubuğu -->
+            <div class="toolbar">
+                <button class="tool-btn active" id="tool-brush" onclick="setTool('brush')">✏️ Fırça</button>
+                <button class="tool-btn" id="tool-fill" onclick="setTool('fill')">🪣 Boya Kovası</button>
+                <button class="tool-btn" id="tool-stamp" onclick="setTool('stamp')">⭐ Damga</button>
+                <button class="tool-btn" id="tool-eraser" onclick="setTool('eraser')">🧹 Silgi</button>
+                <select id="brush-size" class="tool-btn" onchange="changeSize(this.value)">
+                    <option value="5">İnce</option>
+                    <option value="12" selected>Orta</option>
+                    <option value="25">Kalın</option>
+                </select>
+            </div>
+
+            <!-- Renk Paleti -->
+            <div class="palette" id="color-palette">
+                <!-- Renkler JS ile yüklenecek -->
+            </div>
+
+            <!-- Eylem Butonları -->
+            <div class="action-bar">
+                <button class="action-btn clear" onclick="clearCanvas()">🗑️ Temizle</button>
+                <button class="action-btn fullscreen" onclick="toggleFullScreen()">📺 Tam Ekran</button>
+                <button class="action-btn" onclick="saveImage()">💾 Kaydet</button>
             </div>
         </div>
-
     </div>
 
     <script>
-        const templates = [
-            { id: 1, name: "🏠 Ev & Bahçe", type: "house" },
-            { id: 2, name: "🐱 Sevimli Kedi", type: "cat" },
-            { id: 3, name: "🚀 Uzay Roketi", type: "rocket" },
-            { id: 4, name: "🚗 Yarış Arabası", type: "car" },
-            { id: 5, name: "🐻 Sevimli Ayıcık", type: "bear" },
-            { id: 6, name: "🌳 Dev Ağaç", type: "tree" },
-            { id: 7, name: "☀️ Güler Yüzlü Güneş", type: "sun" },
-            { id: 8, name: "⛵ Yelkenli Tekne", type: "boat" },
-            { id: 9, name: "⭐ Parlayan Yıldız", type: "star" },
-            { id: 10, name: "🦋 Renkli Kelebek", type: "butterfly" },
-            { id: 11, name: "🍄 Mantar Ev", type: "mushroom" },
-            { id: 12, name: "🍦 Tatlı Dondurma", type: "icecream" },
-            { id: 13, name: "⚽ Futbol Topu", type: "ball" },
-            { id: 14, name: "🐟 Şirin Balık", type: "fish" },
-            { id: 15, name: "🦖 Sevimli Dinozor", type: "dino" },
-            { id: 16, name: "🌸 Bahar Çiçeği", type: "flower" },
-            { id: 17, name: "🏰 Masal Şatosu", type: "castle" },
-            { id: 18, name: "🎈 Neşeli Balonlar", type: "balloon" },
-            { id: 19, name: "🦉 Bilge Baykuş", type: "owl" },
-            { id: 20, name: "🍎 Kırmızı Elma", type: "apple" },
-            { id: 21, name: "🚂 Oyuncak Tren", type: "train" },
-            { id: 22, name: "🤖 Sevimli Robot", type: "robot" },
-            { id: 23, name: "🐼 Panda", type: "panda" },
-            { id: 24, name: "🌻 Ayçiçeği", type: "sunflower" },
-            { id: 25, name: "🍩 Şekerleme Donut", type: "donut" },
-            { id: 26, name: "🐢 Sevimli Kaplumbağa", type: "turtle" },
-            { id: 27, name: "🚁 Kurtarma Helikopteri", type: "helicopter" },
-            { id: 28, name: "🌙 Hilal Ay", type: "moon" },
-            { id: 29, name: "🦁 Orman Kralı Aslan", type: "lion" },
-            { id: 30, name: "🎁 Hediye Paketi", type: "gift" },
-            { id: 31, name: "🐸 Kurbağa Prens", type: "frog" },
-            { id: 32, name: "🦆 Ördek Ailesi", type: "duck" },
-            { id: 33, name: "🍉 Sulu Karpuz", type: "watermelon" },
-            { id: 34, name: "🚀 Ufo & Uzaylı", type: "ufo" },
-            { id: 35, name: "🦊 Kurnaz Tilki", type: "fox" },
-            { id: 36, name: "👑 Kral Tacı", type: "crown" },
-            { id: 37, name: "🐝 Çalışkan Arı", type: "bee" },
-            { id: 38, name: "🧁 Cupcake", type: "cupcake" },
-            { id: 39, name: "🚲 Çocuk Bisikleti", type: "bicycle" },
-            { id: 40, name: "🌵 Sevimli Kaktüs", type: "cactus" },
-            { id: 41, name: "🐧 Sevimli Penguen", type: "penguin" },
-            { id: 42, name: "🍭 Lolipop", type: "lollipop" },
-            { id: 43, name: "⛄ Kardan Adam", type: "snowman" },
-            { id: 44, name: "🦢 Zarif Kuğu", type: "swan" },
-            { id: 45, name: "🤡 Neşeli Palyaço", type: "clown" },
-            { id: 46, name: "🦒 Uzun Zürafa", type: "giraffe" },
-            { id: 47, name: "⭐ Deniz Yıldızı", type: "starfish" },
-            { id: 48, name: "🎵 Müzik Notası", type: "music" },
-            { id: 49, name: "🪁 Uçurtma", type: "kite" },
-            { id: 50, name: "☁️ Mutlu Bulut", type: "cloud" }
+        // --- GENEL EKRAN GEÇİŞLERİ ---
+        function openScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            if(screenId === 'books-screen') {
+                renderTemplates();
+            }
+        }
+
+        // --- SİZDEN GELENLER (MAİL YÖNLENDİRME) ---
+        function openSizdenGelenler() {
+            const email = "anadoluimalathane@gmail.com";
+            const subject = encodeURIComponent("Sizden Gelenler - Resmim");
+            const body = encodeURIComponent("Merhaba,\n\nÇocuğumun yaptığı resmi ekte gönderiyorum. Sizden Gelenler köşenizde paylaşmanız dileğiyle!\n\nSevgiler.");
+            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+        }
+
+        // --- 50 ADET BOYAMA ŞABLONU OLUŞTURUCU ---
+        const templateCategories = ["Ev", "Kedi", "Köpek", "Araba", "Roket", "Kelebek", "Balık", "Ayı", "Çiçek", "Gemi", "Uçak", "Ağaç", "Aslan", "Fil", "Zürafa", "Robot", "Kardan Adam", "Dinozor", "Güneş", "Bulut", "Yıldız", "Kalp", "Bisiklet", "Tren", "Mantar", "Kuzu", "Kurbağa", "Ördek", "Maymun", "Penguen", "Kuş", "Kuğu", "Yunus", "Kaplumbağa", "Kaktüs", "Şato", "Korsan Gemisi", "Helikopter", "Traktör", "İtfaiye", "Polis Arabası", "Roket", "Pasta", "Dondurma", "Şeker", "Hediye", "Taç", "Kale", "Balon", "Uçurtma"];
+
+        function renderTemplates() {
+            const grid = document.getElementById('templates-grid');
+            if (grid.children.length > 0) return; // Zaten yüklendiyse tekrar yükleme
+
+            templateCategories.forEach((name, index) => {
+                const card = document.createElement('div');
+                card.className = 'template-card';
+                card.onclick = () => startDrawingApp(index);
+
+                const thumbCanvas = document.createElement('canvas');
+                thumbCanvas.width = 150;
+                thumbCanvas.height = 100;
+                drawTemplateThumbnail(thumbCanvas, index);
+
+                const label = document.createElement('span');
+                label.innerText = `${index + 1}. ${name}`;
+
+                card.appendChild(thumbCanvas);
+                card.appendChild(label);
+                grid.appendChild(card);
+            });
+        }
+
+        function drawTemplateThumbnail(canvas, index) {
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "#2d3436";
+            ctx.lineWidth = 3;
+            ctx.fillStyle = "#dfe4ea";
+
+            ctx.save();
+            ctx.scale(0.5, 0.5);
+            ctx.translate(75, 50);
+            
+            // Basit çizim simülasyonları
+            ctx.beginPath();
+            ctx.arc(0, 0, 40, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // --- ÇİZİM VE BOYAMA MOTORU ---
+        const canvas = document.getElementById('paintCanvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        let currentTool = 'brush';
+        let currentColor = '#ff4757';
+        let currentSize = 12;
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        const colors = [
+            '#000000', '#ffffff', '#ff4757', '#ff6b81', '#ffa502', '#fffa65', 
+            '#2ed573', '#7bed9f', '#1e90ff', '#70a1ff', '#9b59b6', '#8e44ad', 
+            '#e84393', '#fd79a8', '#d63031', '#00b894', '#0984e3', '#6c5ce7'
         ];
 
-        const templateListEl = document.getElementById('templateList');
-        let groupDiv = document.createElement('div');
-        groupDiv.className = 'template-group';
-
-        templates.forEach((t, index) => {
-            const btn = document.createElement('button');
-            btn.className = `tpl-btn ${index === 0 ? 'active' : ''}`;
-            btn.innerHTML = t.name;
-            btn.onclick = () => setTemplate(t.type, btn);
-            groupDiv.appendChild(btn);
-
-            if ((index + 1) % 2 === 0 || index === templates.length - 1) {
-                templateListEl.appendChild(groupDiv);
-                groupDiv = document.createElement('div');
-                groupDiv.className = 'template-group';
-            }
-        });
-
-        const canvas = document.getElementById('paintCanvas');
-        const ctx = canvas.getContext('2d');
-        let painting = false;
-        let currentColor = '#ef4444';
-        let currentLineWidth = 3; 
-        let currentTemplate = 'house';
-        let activeTool = 'brush'; 
-        let currentStampChar = '⭐';
-
-        let historySteps = [];
-        let historyStepIndex = -1;
-
-        let userCanvas = document.createElement('canvas');
-        userCanvas.width = 460;
-        userCanvas.height = 310;
-        let userCtx = userCanvas.getContext('2d');
-
-        let templateCanvas = document.createElement('canvas');
-        templateCanvas.width = 460;
-        templateCanvas.height = 310;
-        let templateCtx = templateCanvas.getContext('2d');
-
-        function playStudioSound() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(660, audioCtx.currentTime + 0.08);
-                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.08);
-            } catch(e) {}
+        function initPalette() {
+            const paletteEl = document.getElementById('color-palette');
+            paletteEl.innerHTML = '';
+            colors.forEach((col, idx) => {
+                const swatch = document.createElement('div');
+                swatch.className = `color-swatch ${idx === 2 ? 'active' : ''}`;
+                swatch.style.backgroundColor = col;
+                swatch.onclick = () => {
+                    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+                    swatch.classList.add('active');
+                    currentColor = col;
+                    if(currentTool === 'eraser') setTool('brush');
+                };
+                paletteEl.appendChild(swatch);
+            });
         }
 
-        function resetUserCanvas() {
-            userCtx.fillStyle = '#ffffff';
-            userCtx.fillRect(0, 0, userCanvas.width, userCanvas.height);
-        }
-
-        function buildTemplateLayer() {
-            templateCtx.clearRect(0, 0, templateCanvas.width, templateCanvas.height);
-            templateCtx.lineWidth = 3;
-            templateCtx.strokeStyle = '#18181b';
-            templateCtx.lineCap = 'round';
-            templateCtx.lineJoin = 'round';
-
-            templateCtx.strokeRect(10, 10, templateCanvas.width - 20, templateCanvas.height - 20);
-
-            switch(currentTemplate) {
-                case 'house':
-                    templateCtx.beginPath(); templateCtx.arc(75, 45, 18, 0, Math.PI * 2); templateCtx.fillStyle = '#fef08a'; templateCtx.fill(); templateCtx.stroke();
-                    templateCtx.strokeRect(150, 110, 160, 115);
-                    templateCtx.beginPath(); templateCtx.moveTo(125, 110); templateCtx.lineTo(230, 40); templateCtx.lineTo(335, 110); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.strokeRect(205, 160, 50, 65);
-                    templateCtx.strokeRect(170, 130, 30, 30);
-                    templateCtx.strokeRect(260, 130, 30, 30);
-                    break;
-                case 'cat':
-                    templateCtx.beginPath(); templateCtx.arc(230, 140, 65, 0, Math.PI * 2); templateCtx.fillStyle = '#fff'; templateCtx.fill(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(180, 95); templateCtx.lineTo(170, 40); templateCtx.lineTo(215, 85); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(280, 95); templateCtx.lineTo(290, 40); templateCtx.lineTo(245, 85); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(205, 125, 7, 0, Math.PI * 2); templateCtx.fillStyle = '#18181b'; templateCtx.fill();
-                    templateCtx.beginPath(); templateCtx.arc(255, 125, 7, 0, Math.PI * 2); templateCtx.fill();
-                    templateCtx.beginPath(); templateCtx.arc(230, 145, 5, 0, Math.PI * 2); templateCtx.fill();
-                    break;
-                case 'rocket':
-                    templateCtx.beginPath(); templateCtx.arc(230, 100, 38, Math.PI, 0, false); templateCtx.lineTo(268, 180); templateCtx.lineTo(192, 180); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(192, 145); templateCtx.lineTo(160, 180); templateCtx.lineTo(192, 180); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(268, 145); templateCtx.lineTo(300, 180); templateCtx.lineTo(268, 180); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(230, 95, 12, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(212, 180); templateCtx.lineTo(230, 220); templateCtx.lineTo(248, 180); templateCtx.closePath(); templateCtx.stroke();
-                    break;
-                case 'car':
-                    templateCtx.strokeRect(150, 140, 160, 50);
-                    templateCtx.beginPath(); templateCtx.moveTo(180, 140); templateCtx.lineTo(200, 100); templateCtx.lineTo(260, 100); templateCtx.lineTo(280, 140); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(185, 190, 22, 0, Math.PI * 2); templateCtx.fillStyle = '#fff'; templateCtx.fill(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(275, 190, 22, 0, Math.PI * 2); templateCtx.fillStyle = '#fff'; templateCtx.fill(); templateCtx.stroke();
-                    break;
-                case 'bear':
-                    templateCtx.beginPath(); templateCtx.arc(230, 150, 55, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(185, 105, 18, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(275, 105, 18, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(210, 140, 6, 0, Math.PI * 2); templateCtx.fillStyle = '#18181b'; templateCtx.fill();
-                    templateCtx.beginPath(); templateCtx.arc(250, 140, 6, 0, Math.PI * 2); templateCtx.fill();
-                    templateCtx.beginPath(); templateCtx.arc(230, 165, 12, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-                case 'tree':
-                    templateCtx.beginPath(); templateCtx.rect(215, 170, 30, 60); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(230, 130, 50, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-                case 'sun':
-                    templateCtx.beginPath(); templateCtx.arc(230, 140, 45, 0, Math.PI * 2); templateCtx.fillStyle = '#fef08a'; templateCtx.fill(); templateCtx.stroke();
-                    for(let i=0; i<8; i++) {
-                        let angle = (i * Math.PI) / 4;
-                        let x1 = 230 + Math.cos(angle) * 55;
-                        let y1 = 140 + Math.sin(angle) * 55;
-                        let x2 = 230 + Math.cos(angle) * 70;
-                        let y2 = 140 + Math.sin(angle) * 70;
-                        templateCtx.beginPath(); templateCtx.moveTo(x1, y1); templateCtx.lineTo(x2, y2); templateCtx.stroke();
-                    }
-                    break;
-                case 'boat':
-                    templateCtx.beginPath(); templateCtx.moveTo(160, 190); templateCtx.lineTo(300, 190); templateCtx.lineTo(270, 230); templateCtx.lineTo(190, 230); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(230, 180); templateCtx.lineTo(230, 90); templateCtx.lineTo(280, 150); templateCtx.closePath(); templateCtx.stroke();
-                    break;
-                case 'star':
-                    templateCtx.beginPath();
-                    let cx = 230, cy = 140, outerRadius = 50, innerRadius = 25;
-                    for (let i = 0; i < 10; i++) {
-                        let r = (i % 2 === 0) ? outerRadius : innerRadius;
-                        let angle = (i * Math.PI) / 5 - Math.PI / 2;
-                        let x = cx + Math.cos(angle) * r;
-                        let y = cy + Math.sin(angle) * r;
-                        if (i === 0) templateCtx.moveTo(x, y); else templateCtx.lineTo(x, y);
-                    }
-                    templateCtx.closePath(); templateCtx.stroke();
-                    break;
-                case 'butterfly':
-                    templateCtx.beginPath(); templateCtx.ellipse(230, 140, 10, 45, 0, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.ellipse(190, 110, 30, 20, Math.PI/4, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.ellipse(270, 110, 30, 20, -Math.PI/4, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.ellipse(190, 170, 25, 20, -Math.PI/4, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.ellipse(270, 170, 25, 20, Math.PI/4, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-                case 'mushroom':
-                    templateCtx.beginPath(); templateCtx.arc(230, 120, 55, Math.PI, 0, false); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.strokeRect(210, 120, 40, 85);
-                    break;
-                case 'icecream':
-                    templateCtx.beginPath(); templateCtx.moveTo(200, 150); templateCtx.lineTo(260, 150); templateCtx.lineTo(230, 230); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(230, 130, 35, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(230, 95, 22, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-                case 'ball':
-                    templateCtx.beginPath(); templateCtx.arc(230, 140, 55, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(230, 140, 18, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(230, 85); templateCtx.lineTo(230, 122); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(230, 158); templateCtx.lineTo(230, 195); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(175, 140); templateCtx.lineTo(212, 140); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(248, 140); templateCtx.lineTo(285, 140); templateCtx.stroke();
-                    break;
-                case 'fish':
-                    templateCtx.beginPath(); templateCtx.ellipse(220, 140, 55, 35, 0, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(270, 140); templateCtx.lineTo(310, 110); templateCtx.lineTo(310, 170); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(190, 130, 6, 0, Math.PI * 2); templateCtx.fillStyle = '#18181b'; templateCtx.fill();
-                    break;
-                case 'dino':
-                    templateCtx.beginPath(); templateCtx.ellipse(230, 150, 50, 30, 0, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(275, 120, 20, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(200, 180); templateCtx.lineTo(195, 220); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(260, 180); templateCtx.lineTo(265, 220); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(180, 150); templateCtx.lineTo(140, 180); templateCtx.stroke();
-                    break;
-                case 'flower':
-                    templateCtx.beginPath(); templateCtx.arc(230, 120, 22, 0, Math.PI * 2); templateCtx.fillStyle = '#fef08a'; templateCtx.fill(); templateCtx.stroke();
-                    for(let i=0; i<6; i++) {
-                        let angle = (i * Math.PI) / 3;
-                        let fx = 230 + Math.cos(angle) * 30;
-                        let fy = 120 + Math.sin(angle) * 30;
-                        templateCtx.beginPath(); templateCtx.arc(fx, fy, 20, 0, Math.PI * 2); templateCtx.stroke();
-                    }
-                    templateCtx.beginPath(); templateCtx.moveTo(230, 142); templateCtx.lineTo(230, 230); templateCtx.stroke();
-                    break;
-                case 'castle':
-                    templateCtx.strokeRect(180, 110, 100, 110);
-                    templateCtx.strokeRect(155, 90, 35, 130);
-                    templateCtx.strokeRect(270, 90, 35, 130);
-                    templateCtx.beginPath(); templateCtx.moveTo(155, 90); templateCtx.lineTo(172, 50); templateCtx.lineTo(190, 90); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(270, 90); templateCtx.lineTo(287, 50); templateCtx.lineTo(305, 90); templateCtx.closePath(); templateCtx.stroke();
-                    break;
-                case 'balloon':
-                    for(let bx of [190, 230, 270]) {
-                        templateCtx.beginPath(); templateCtx.arc(bx, 110, 25, 0, Math.PI * 2); templateCtx.stroke();
-                        templateCtx.beginPath(); templateCtx.moveTo(bx, 135); templateCtx.lineTo(230, 230); templateCtx.stroke();
-                    }
-                    break;
-                case 'owl':
-                    templateCtx.beginPath(); templateCtx.arc(230, 140, 50, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(210, 130, 15, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(250, 130, 15, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(210, 130, 5, 0, Math.PI * 2); templateCtx.fillStyle='#18181b'; templateCtx.fill();
-                    templateCtx.beginPath(); templateCtx.arc(250, 130, 5, 0, Math.PI * 2); templateCtx.fillStyle='#18181b'; templateCtx.fill();
-                    break;
-                case 'apple':
-                    templateCtx.beginPath(); templateCtx.arc(230, 145, 45, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(230, 100); templateCtx.quadraticCurveTo(250, 75, 230, 60); templateCtx.stroke();
-                    break;
-                case 'train':
-                    templateCtx.strokeRect(160, 130, 80, 70);
-                    templateCtx.strokeRect(250, 150, 50, 50);
-                    templateCtx.beginPath(); templateCtx.arc(180, 200, 18, 0, Math.PI * 2); templateCtx.fillStyle='#fff'; templateCtx.fill(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(220, 200, 18, 0, Math.PI * 2); templateCtx.fillStyle='#fff'; templateCtx.fill(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(275, 200, 18, 0, Math.PI * 2); templateCtx.fillStyle='#fff'; templateCtx.fill(); templateCtx.stroke();
-                    break;
-                case 'robot':
-                    templateCtx.strokeRect(205, 95, 50, 40);
-                    templateCtx.strokeRect(190, 140, 80, 85);
-                    templateCtx.beginPath(); templateCtx.arc(230, 95, 5, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-                case 'panda':
-                    templateCtx.beginPath(); templateCtx.arc(230, 140, 55, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(185, 100, 16, 0, Math.PI * 2); templateCtx.fillStyle='#18181b'; templateCtx.fill(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(275, 100, 16, 0, Math.PI * 2); templateCtx.fillStyle='#18181b'; templateCtx.fill(); templateCtx.stroke();
-                    break;
-                case 'sunflower':
-                    templateCtx.beginPath(); templateCtx.arc(230, 135, 25, 0, Math.PI * 2); templateCtx.fillStyle='#a16207'; templateCtx.fill(); templateCtx.stroke();
-                    for(let i=0; i<10; i++) {
-                        let angle = (i * Math.PI) / 5;
-                        let sx = 230 + Math.cos(angle) * 38;
-                        let sy = 135 + Math.sin(angle) * 38;
-                        templateCtx.beginPath(); templateCtx.arc(sx, sy, 15, 0, Math.PI * 2); templateCtx.stroke();
-                    }
-                    templateCtx.beginPath(); templateCtx.moveTo(230, 160); templateCtx.lineTo(230, 230); templateCtx.stroke();
-                    break;
-                case 'donut':
-                    templateCtx.beginPath(); templateCtx.arc(230, 140, 55, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(230, 140, 20, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-                case 'turtle':
-                    templateCtx.beginPath(); templateCtx.arc(230, 145, 48, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(230, 85, 20, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-                case 'helicopter':
-                    templateCtx.strokeRect(190, 130, 80, 50);
-                    templateCtx.beginPath(); templateCtx.moveTo(150, 100); templateCtx.lineTo(310, 100); templateCtx.stroke();
-                    break;
-                case 'moon':
-                    templateCtx.beginPath(); templateCtx.arc(230, 140, 60, 0.5 * Math.PI, 1.5 * Math.PI, false);
-                    templateCtx.quadraticCurveTo(270, 140, 230, 200); templateCtx.stroke();
-                    break;
-                case 'lion':
-                    templateCtx.beginPath(); templateCtx.arc(230, 140, 55, 0, Math.PI * 2); templateCtx.stroke();
-                    for(let i=0; i<12; i++) {
-                        let angle = (i * Math.PI) / 6;
-                        let lx = 230 + Math.cos(angle) * 65;
-                        let ly = 140 + Math.sin(angle) * 65;
-                        templateCtx.beginPath(); templateCtx.arc(lx, ly, 14, 0, Math.PI * 2); templateCtx.stroke();
-                    }
-                    break;
-                case 'gift':
-                    templateCtx.strokeRect(180, 120, 100, 90);
-                    templateCtx.strokeRect(172, 105, 116, 20);
-                    templateCtx.beginPath(); templateCtx.moveTo(230, 120); templateCtx.lineTo(230, 210); templateCtx.stroke();
-                    break;
-                case 'frog':
-                    templateCtx.beginPath(); templateCtx.arc(230, 150, 55, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(200, 100, 16, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(260, 100, 16, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-                case 'duck':
-                    templateCtx.beginPath(); templateCtx.arc(240, 150, 45, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(190, 115, 25, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-                case 'watermelon':
-                    templateCtx.beginPath(); templateCtx.arc(230, 180, 75, Math.PI, 0, false); templateCtx.closePath(); templateCtx.stroke();
-                    break;
-                case 'ufo':
-                    templateCtx.beginPath(); templateCtx.ellipse(230, 150, 80, 25, 0, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(230, 135, 35, Math.PI, 0, false); templateCtx.stroke();
-                    break;
-                case 'fox':
-                    templateCtx.beginPath(); templateCtx.arc(230, 145, 50, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(185, 115); templateCtx.lineTo(155, 75); templateCtx.lineTo(200, 105); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(275, 115); templateCtx.lineTo(305, 75); templateCtx.lineTo(260, 105); templateCtx.closePath(); templateCtx.stroke();
-                    break;
-                case 'crown':
-                    templateCtx.beginPath(); templateCtx.moveTo(170, 180); templateCtx.lineTo(170, 120); templateCtx.lineTo(200, 150); templateCtx.lineTo(230, 100); templateCtx.lineTo(260, 150); templateCtx.lineTo(290, 120); templateCtx.lineTo(290, 180); templateCtx.closePath(); templateCtx.stroke();
-                    break;
-                case 'bee':
-                    templateCtx.beginPath(); templateCtx.ellipse(230, 145, 55, 38, 0, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(210, 107); templateCtx.lineTo(210, 183); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(250, 107); templateCtx.lineTo(250, 183); templateCtx.stroke();
-                    break;
-                case 'cupcake':
-                    templateCtx.beginPath(); templateCtx.moveTo(195, 160); templateCtx.lineTo(265, 160); templateCtx.lineTo(250, 220); templateCtx.lineTo(210, 220); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(230, 150, 35, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-                case 'bicycle':
-                    templateCtx.beginPath(); templateCtx.arc(175, 180, 28, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(285, 180, 28, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(175, 180); templateCtx.lineTo(230, 140); templateCtx.lineTo(265, 180); templateCtx.stroke();
-                    break;
-                case 'cactus':
-                    templateCtx.strokeRect(215, 105, 30, 115);
-                    templateCtx.beginPath(); templateCtx.arc(230, 105, 20, Math.PI, 0, false); templateCtx.stroke();
-                    break;
-                case 'penguin':
-                    templateCtx.beginPath(); templateCtx.ellipse(230, 145, 45, 60, 0, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.ellipse(230, 150, 30, 45, 0, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-                case 'lollipop':
-                    templateCtx.beginPath(); templateCtx.arc(230, 110, 40, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(230, 150); templateCtx.lineTo(230, 230); templateCtx.stroke();
-                    break;
-                case 'snowman':
-                    templateCtx.beginPath(); templateCtx.arc(230, 105, 22, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(230, 150, 32, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(230, 205, 42, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-                case 'swan':
-                    templateCtx.beginPath(); templateCtx.ellipse(230, 160, 45, 28, 0, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(210, 140); templateCtx.quadraticCurveTo(180, 100, 210, 80); templateCtx.stroke();
-                    break;
-                case 'clown':
-                    templateCtx.beginPath(); templateCtx.arc(230, 140, 50, 0, Math.PI * 2); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(230, 145, 12, 0, Math.PI * 2); templateCtx.fillStyle='#ef4444'; templateCtx.fill(); templateCtx.stroke();
-                    break;
-                case 'giraffe':
-                    templateCtx.strokeRect(210, 140, 40, 80);
-                    templateCtx.strokeRect(215, 75, 25, 75);
-                    templateCtx.beginPath(); templateCtx.arc(225, 70, 18, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-                case 'starfish':
-                    templateCtx.beginPath();
-                    for(let i=0; i<10; i++) {
-                        let r = (i % 2 === 0) ? 50 : 22;
-                        let angle = (i * Math.PI) / 5 - Math.PI / 2;
-                        let sx = 230 + Math.cos(angle) * r;
-                        let sy = 145 + Math.sin(angle) * r;
-                        if(i === 0) templateCtx.moveTo(sx, sy); else templateCtx.lineTo(sx, sy);
-                    }
-                    templateCtx.closePath(); templateCtx.stroke();
-                    break;
-                case 'music':
-                    templateCtx.beginPath(); templateCtx.arc(205, 180, 15, 0, Math.PI * 2); templateCtx.fillStyle='#18181b'; templateCtx.fill(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.rect(216, 110, 8, 70); templateCtx.fill(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.arc(255, 165, 15, 0, Math.PI * 2); templateCtx.fillStyle='#18181b'; templateCtx.fill(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.rect(266, 95, 8, 70); templateCtx.fill(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(224, 110); templateCtx.lineTo(274, 95); templateCtx.lineTo(274, 115); templateCtx.lineTo(224, 130); templateCtx.closePath(); templateCtx.fill(); templateCtx.stroke();
-                    break;
-                case 'kite':
-                    templateCtx.beginPath(); templateCtx.moveTo(230, 80); templateCtx.lineTo(280, 140); templateCtx.lineTo(230, 200); templateCtx.lineTo(180, 140); templateCtx.closePath(); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(230, 80); templateCtx.lineTo(230, 200); templateCtx.stroke();
-                    templateCtx.beginPath(); templateCtx.moveTo(180, 140); templateCtx.lineTo(280, 140); templateCtx.stroke();
-                    break;
-                case 'cloud':
-                    templateCtx.beginPath();
-                    templateCtx.arc(200, 150, 30, 0, Math.PI * 2);
-                    templateCtx.arc(235, 130, 40, 0, Math.PI * 2);
-                    templateCtx.arc(270, 150, 28, 0, Math.PI * 2);
-                    templateCtx.closePath(); templateCtx.stroke();
-                    break;
-                default:
-                    templateCtx.beginPath(); templateCtx.arc(230, 140, 75, 0, Math.PI * 2); templateCtx.stroke();
-                    break;
-            }
-        }
-
-        function saveState() {
-            historySteps = historySteps.slice(0, historyStepIndex + 1);
-            historySteps.push(userCtx.getImageData(0, 0, userCanvas.width, userCanvas.height));
-            historyStepIndex++;
-            if (historySteps.length > 25) {
-                historySteps.shift();
-                historyStepIndex--;
-            }
-        }
-
-        function undoAction() {
-            if (historyStepIndex > 0) {
-                historyStepIndex--;
-                userCtx.putImageData(historySteps[historyStepIndex], 0, 0);
-                redrawEverything();
-                playStudioSound();
-            }
-        }
-
-        function redoAction() {
-            if (historyStepIndex < historySteps.length - 1) {
-                historyStepIndex++;
-                userCtx.putImageData(historySteps[historyStepIndex], 0, 0);
-                redrawEverything();
-                playStudioSound();
-            }
-        }
-
-        function redrawEverything() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(userCanvas, 0, 0);
-            ctx.drawImage(templateCanvas, 0, 0);
-
-            const nameInput = document.getElementById('childName').value.trim().toUpperCase();
-            const displayName = nameInput !== "" ? nameInput : "PRO SANATÇI";
+        function startDrawingApp(templateIndex) {
+            openScreen('app-screen');
+            resizeCanvas();
+            clearCanvas();
             
-            ctx.font = "bold 20px -apple-system, sans-serif";
-            ctx.textAlign = "center";
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = "#18181b";
-            ctx.fillStyle = "rgba(0,0,0,0)";
-            ctx.strokeText(displayName, canvas.width / 2, 282);
-        }
-
-        function initCanvas() {
-            userCanvas.width = 460;
-            userCanvas.height = 310;
-            templateCanvas.width = 460;
-            templateCanvas.height = 310;
-            canvas.width = 460;
-            canvas.height = 310;
-            
-            resetUserCanvas();
-            buildTemplateLayer();
-            
-            historySteps = [];
-            historyStepIndex = -1;
-            saveState();
-
-            redrawEverything();
-        }
-        initCanvas();
-
-        function setTemplate(tpl, btn) {
-            currentTemplate = tpl;
-            setActiveTool('brush');
-            document.querySelectorAll('.tpl-btn').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-            initCanvas();
-            playStudioSound();
-        }
-
-        function setLineWidth(width, btn) {
-            currentLineWidth = width;
-            if(activeTool === 'eraser') setActiveTool('brush');
-            
-            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active-size'));
-            if(btn) btn.classList.add('active-size');
-            playStudioSound();
-        }
-
-        function getMousePos(e) {
-            const rect = canvas.getBoundingClientRect();
-            let clientX = e.clientX, clientY = e.clientY;
-            if (e.touches && e.touches[0]) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            }
-            let scaleX = canvas.width / rect.width;
-            let scaleY = canvas.height / rect.height;
-            return { 
-                x: (clientX - rect.left) * scaleX, 
-                y: (clientY - rect.top) * scaleY 
-            };
-        }
-
-        function floodFill(startX, startY, fillColorHex) {
-            redrawEverything();
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const pixels = imgData.data;
-
-            const startPos = (Math.floor(startY) * canvas.width + Math.floor(startX)) * 4;
-            const startR = pixels[startPos];
-            const startG = pixels[startPos + 1];
-            const startB = pixels[startPos + 2];
-
-            if (startR < 40 && startG < 40 && startB < 40) return;
-
-            let tempC = document.createElement('canvas').getContext('2d');
-            tempC.fillStyle = fillColorHex;
-            tempC.fillRect(0,0,1,1);
-            let cData = tempC.getImageData(0,0,1,1).data;
-            const targetR = cData[0], targetG = cData[1], targetB = cData[2];
-
-            if (startR === targetR && startG === targetG && startB === targetB) return;
-
-            const userImgData = userCtx.getImageData(0, 0, userCanvas.width, userCanvas.height);
-            const userPixels = userImgData.data;
-
-            let queue = [[Math.floor(startX), Math.floor(startY)]];
-            let visited = new Uint8Array(canvas.width * canvas.height);
-
-            while (queue.length > 0) {
-                let [x, y] = queue.pop();
-                let idx = (y * canvas.width + x);
-
-                if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) continue;
-                if (visited[idx]) continue;
-                visited[idx] = 1;
-
-                let pIdx = idx * 4;
-                let r = pixels[pIdx], g = pixels[pIdx+1], b = pixels[pIdx+2];
-
-                if (r < 50 && g < 50 && b < 50) continue;
-
-                if (Math.abs(r - startR) + Math.abs(g - startG) + Math.abs(b - startB) < 55) {
-                    userPixels[pIdx] = targetR;
-                    userPixels[pIdx+1] = targetG;
-                    userPixels[pIdx+2] = targetB;
-                    userPixels[pIdx+3] = 255;
-
-                    pixels[pIdx] = targetR;
-                    pixels[pIdx+1] = targetG;
-                    pixels[pIdx+2] = targetB;
-
-                    queue.push([x + 1, y]);
-                    queue.push([x - 1, y]);
-                    queue.push([x, y + 1], [x, y - 1]);
-                }
-            }
-
-            userCtx.putImageData(userImgData, 0, 0);
-            redrawEverything();
-            saveState();
-        }
-
-        function pickColor(x, y) {
-            redrawEverything();
-            const pixel = ctx.getImageData(x, y, 1, 1).data;
-            const hex = "#" + ((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2]).toString(16).slice(1);
-            currentColor = hex;
-            document.getElementById('customColorPicker').value = hex;
-            document.querySelectorAll('.color-box').forEach(b => b.classList.remove('active'));
-            setActiveTool('brush');
-            playStudioSound();
-        }
-
-        function placeStamp(x, y, char) {
-            userCtx.font = "30px sans-serif";
-            userCtx.textAlign = "center";
-            userCtx.textBaseline = "middle";
-            userCtx.fillText(char, x, y);
-            redrawEverything();
-            saveState();
-            playStudioSound();
-        }
-
-        function startAction(e) {
-            const pos = getMousePos(e);
-            if (activeTool === 'bucket') {
-                floodFill(pos.x, pos.y, currentColor);
-                playStudioSound();
-                return;
-            } else if (activeTool === 'eyedropper') {
-                pickColor(pos.x, pos.y);
-                return;
-            } else if (activeTool === 'stamp') {
-                placeStamp(pos.x, pos.y, currentStampChar);
-                return;
-            }
-            painting = true;
-            userCtx.beginPath();
-            userCtx.moveTo(pos.x, pos.y);
-            e.preventDefault();
-        }
-
-        function endPosition() {
-            if (!painting) return;
-            painting = false;
-            userCtx.beginPath();
-            saveState();
-        }
-
-        function draw(e) {
-            if (!painting || activeTool === 'bucket' || activeTool === 'eyedropper' || activeTool === 'stamp') return;
-            e.preventDefault();
-            const pos = getMousePos(e);
-
-            userCtx.lineWidth = currentLineWidth;
-            userCtx.lineCap = 'round';
-            userCtx.lineJoin = 'round';
-            userCtx.strokeStyle = currentColor;
-
-            userCtx.lineTo(pos.x, pos.y);
-            userCtx.stroke();
-            userCtx.beginPath();
-            userCtx.moveTo(pos.x, pos.y);
-
-            redrawEverything();
-        }
-
-        canvas.addEventListener('mousedown', startAction);
-        canvas.addEventListener('mouseup', endPosition);
-        canvas.addEventListener('mousemove', draw);
-
-        canvas.addEventListener('touchstart', startAction, { passive: false });
-        canvas.addEventListener('touchend', endPosition);
-        canvas.addEventListener('touchmove', draw, { passive: false });
-
-        function selectColor(color, element) {
-            currentColor = color;
-            if (activeTool !== 'brush') setActiveTool('brush');
-            document.querySelectorAll('.color-box').forEach(b => b.classList.remove('active'));
-            if(element) element.classList.add('active');
-            playStudioSound();
-        }
-
-        function setActiveTool(tool) {
-            activeTool = tool;
-            document.getElementById('bucketBtn').classList.remove('active-bucket');
-            document.getElementById('eyedropperBtn').classList.remove('active-eyedropper');
-            if (tool === 'bucket') document.getElementById('bucketBtn').classList.add('active-bucket');
-            if (tool === 'eyedropper') document.getElementById('eyedropperBtn').classList.add('active-eyedropper');
-        }
-
-        function enableEraser() {
-            currentColor = '#ffffff';
-            currentLineWidth = 22;
-            setActiveTool('brush');
-            playStudioSound();
-        }
-
-        function enableBucket() {
-            setActiveTool('bucket');
-            playStudioSound();
-        }
-
-        function enableEyedropper() {
-            setActiveTool('eyedropper');
-            playStudioSound();
-        }
-
-        function enableStamp(char) {
-            activeTool = 'stamp';
-            currentStampChar = char;
-            playStudioSound();
-        }
-
-        function toggleFullScreen() {
-            const container = document.getElementById('appContainer');
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                if (container.requestFullscreen) {
-                    container.requestFullscreen();
-                } else if (container.webkitRequestFullscreen) {
-                    container.webkitRequestFullscreen();
-                }
+            if(templateIndex !== null) {
+                document.getElementById('canvas-title').innerText = `Boyama: ${templateCategories[templateIndex]}`;
+                drawTemplateOnMainCanvas(templateIndex);
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                }
+                document.getElementById('canvas-title').innerText = "Kendin Çiz";
             }
-            playStudioSound();
+        }
+
+        function resizeCanvas() {
+            const wrapper = document.getElementById('canvas-wrapper');
+            canvas.width = wrapper.clientWidth;
+            canvas.height = wrapper.clientHeight;
+        }
+
+        function drawTemplateOnMainCanvas(index) {
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Şablon Çizgileri
+            ctx.strokeStyle = "#2d3436";
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            
+            // Örnek şablon şekli çizimi
+            ctx.beginPath();
+            ctx.arc(0, 0, Math.min(canvas.width, canvas.height) * 0.3, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function setTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                if(!btn.tagName || btn.tagName !== 'SELECT') btn.classList.remove('active');
+            });
+            if(tool !== 'eraser') {
+                const activeBtn = document.getElementById(`tool-${tool}`);
+                if(activeBtn) activeBtn.classList.add('active');
+            }
+        }
+
+        function changeSize(val) {
+            currentSize = parseInt(val);
         }
 
         function clearCanvas() {
-            setActiveTool('brush');
-            initCanvas();
-            playStudioSound();
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        function downloadImage() {
+        // Fare ve Dokunmatik Olayları
+        canvas.addEventListener('pointerdown', startDraw);
+        canvas.addEventListener('pointermove', draw);
+        canvas.addEventListener('pointerup', stopDraw);
+        canvas.addEventListener('pointercancel', stopDraw);
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        function startDraw(e) {
+            const pos = getMousePos(e);
+            lastX = pos.x;
+            lastY = pos.y;
+
+            if (currentTool === 'fill') {
+                floodFill(Math.floor(lastX), Math.floor(lastY), currentColor);
+                return;
+            }
+
+            if (currentTool === 'stamp') {
+                drawStamp(lastX, lastY);
+                return;
+            }
+
+            isDrawing = true;
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = getMousePos(e);
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(pos.x, pos.y);
+
+            if (currentTool === 'eraser') {
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = currentSize * 2;
+            } else {
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = currentSize;
+            }
+
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+
+            lastX = pos.x;
+            lastY = pos.y;
+        }
+
+        function stopDraw() {
+            isDrawing = false;
+        }
+
+        function drawStamp(x, y) {
+            ctx.font = `${currentSize * 3}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const stamps = ['⭐', '❤️', '🌟', '🎨', '🚀'];
+            const randomStamp = stamps[Math.floor(Math.random() * stamps.length)];
+            ctx.fillText(randomStamp, x, y);
+        }
+
+        // Boya Kovası Algoritması (Flood Fill)
+        function floodFill(startX, startY, fillColor) {
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imgData.data;
+            const targetColor = getPixelColor(data, startX, startY, canvas.width);
+            
+            const rgbFill = hexToRgb(fillColor);
+            if (colorsMatch(targetColor, rgbFill)) return;
+
+            const queue = [[startX, startY]];
+            const visited = new Uint8Array(canvas.width * canvas.height);
+
+            while (queue.length > 0) {
+                const [x, y] = queue.pop();
+                if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) continue;
+                
+                const idx = (y * canvas.width + x);
+                if (visited[idx]) continue;
+                visited[idx] = 1;
+
+                const pixelIdx = idx * 4;
+                const currentPxColor = [data[pixelIdx], data[pixelIdx+1], data[pixelIdx+2]];
+
+                if (colorsMatch(currentPxColor, targetColor)) {
+                    data[pixelIdx] = rgbFill[0];
+                    data[pixelIdx+1] = rgbFill[1];
+                    data[pixelIdx+2] = rgbFill[2];
+
+                    queue.push([x + 1, y]);
+                    queue.push([x - 1, y]);
+                    queue.push([x, y + 1]);
+                    queue.push([x, y - 1]);
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+        }
+
+        function getPixelColor(data, x, y, width) {
+            const idx = (y * width + x) * 4;
+            return [data[idx], data[idx+1], data[idx+2]];
+        }
+
+        function colorsMatch(c1, c2) {
+            return Math.abs(c1[0] - c2[0]) < 15 && 
+                   Math.abs(c1[1] - c2[1]) < 15 && 
+                   Math.abs(c1[2] - c2[2]) < 15;
+        }
+
+        function hexToRgb(hex) {
+            const bigint = parseInt(hex.replace('#',''), 16);
+            return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+        }
+
+        // Kaydet ve Kutlama Efekti
+        function saveImage() {
+            const link = document.createElement('a');
+            link.download = 'minik-sanatci-eserim.png';
+            link.href = canvas.toDataURL();
+            link.click();
+
+            // Kutlama Konfeti Efekti
             confetti({
                 particleCount: 120,
-                spread: 80,
+                spread: 70,
                 origin: { y: 0.6 }
             });
-
-            redrawEverything();
-            const link = document.createElement('a');
-            link.download = 'minik-sanatci-50lik-arsiv.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
         }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {});
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Başlangıç Ayarı
+        window.onload = () => {
+            initPalette();
+        };
     </script>
 </body>
 </html>
