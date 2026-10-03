@@ -3,78 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ücretsiz Çocuk Boyama Kitabı & Online Boyama</title>
+    <title>Minik Sanatçı - Online Çocuk Boyama Kitabı</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: #fdfbf7; color: #333; text-align: center; padding: 20px; }
-        header { background: #ffdf6d; padding: 25px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h1 { color: #ff5722; font-size: 26px; margin-bottom: 10px; }
-        p { color: #555; font-size: 15px; margin-bottom: 15px; }
-        .btn { background: #ff5722; color: white; border: none; padding: 14px 28px; font-size: 18px; font-weight: bold; border-radius: 30px; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 4px 10px rgba(255,87,34,0.3); transition: 0.2s; margin: 10px 5px; }
+        body { background: #fdfbf7; color: #333; text-align: center; padding: 15px; }
+        header { background: #ffdf6d; padding: 20px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { color: #ff5722; font-size: 24px; margin-bottom: 8px; }
+        p { color: #555; font-size: 14px; margin-bottom: 12px; }
+        .btn { background: #ff5722; color: white; border: none; padding: 12px 24px; font-size: 16px; font-weight: bold; border-radius: 30px; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 4px 10px rgba(255,87,34,0.3); transition: 0.2s; margin: 8px 4px; }
         .btn:hover { background: #f4511e; transform: scale(1.03); }
-        .section { background: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        input[type="text"] { padding: 12px; font-size: 16px; border: 2px solid #ddd; border-radius: 10px; width: 80%; max-width: 300px; margin-bottom: 15px; text-align: center; }
-        .palette { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .section { background: white; padding: 15px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        input[type="text"] { padding: 10px; font-size: 15px; border: 2px solid #ddd; border-radius: 10px; width: 85%; max-width: 280px; margin-bottom: 12px; text-align: center; }
+        .palette { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
         .color-box { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        canvas { background: #fff; border: 3px dashed #ffdf6d; border-radius: 15px; max-width: 100%; cursor: crosshair; }
-        .name-output { font-size: 24px; font-weight: bold; letter-spacing: 3px; color: #444; margin-top: 10px; text-transform: uppercase; -webkit-text-stroke: 1px #ff5722; }
+        .color-box.active { border: 3px solid #333; transform: scale(1.1); }
+        canvas { background: #fff; border: 3px dashed #ffdf6d; border-radius: 15px; max-width: 100%; touch-action: none; cursor: crosshair; }
+        .tools { margin: 10px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .tool-btn { background: #ff9800; color: white; border: none; padding: 8px 16px; font-size: 14px; font-weight: bold; border-radius: 20px; cursor: pointer; }
+        .tool-btn.eraser { background: #9e9e9e; }
+        .tool-btn.clear { background: #f44336; }
+        .name-output { font-size: 22px; font-weight: bold; letter-spacing: 2px; color: #444; margin-top: 8px; text-transform: uppercase; -webkit-text-stroke: 1px #ff5722; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🎨 Ücretsiz Boyama Kitabı</h1>
-        <p>Hemen indir veya tarayıcında hemen boyamaya başla!</p>
-        <a href="#" class="btn">📥 Ücretsiz PDF'i İndir</a>
+        <h1>🎨 Minik Sanatçı Atölyesi</h1>
+        <p>Hemen boyamaya başla veya ücretsiz PDF'i indir!</p>
+        <a href="#" class="btn" target="_blank">📥 Ücretsiz PDF'i İndir</a>
     </header>
 
     <div class="section">
-        <h2>✨ Küçük Sanatçı Atölyesi</h2>
-        <p>Çocuğun adını yaz, renkleri seç ve boyamaya başla!</p>
+        <h2>✨ Hazır Boyama Şablonu</h2>
+        <p>Çocuğun adını yaz, rengini seç ve parmağınla boya!</p>
         
         <input type="text" id="childName" placeholder="Sanatçının Adı (Örn: ZEYNEP)" oninput="updateName()">
         
         <div class="palette">
-            <div class="color-box" style="background: #ff5722;" onclick="selectColor('#ff5722')"></div>
-            <div class="color-box" style="background: #4caf50;" onclick="selectColor('#4caf50')"></div>
-            <div class="color-box" style="background: #2196f3;" onclick="selectColor('#2196f3')"></div>
-            <div class="color-box" style="background: #ffeb3b;" onclick="selectColor('#ffeb3b')"></div>
-            <div class="color-box" style="background: #9c27b0;" onclick="selectColor('#9c27b0')"></div>
-            <div class="color-box" style="background: #ffffff; border: 2px solid #ccc;" onclick="selectColor('#ffffff')"></div>
+            <div class="color-box active" style="background: #ff5722;" onclick="selectColor('#ff5722', this)"></div>
+            <div class="color-box" style="background: #4caf50;" onclick="selectColor('#4caf50', this)"></div>
+            <div class="color-box" style="background: #2196f3;" onclick="selectColor('#2196f3', this)"></div>
+            <div class="color-box" style="background: #ffeb3b;" onclick="selectColor('#ffeb3b', this)"></div>
+            <div class="color-box" style="background: #9c27b0;" onclick="selectColor('#9c27b0', this)"></div>
+            <div class="color-box" style="background: #e91e63;" onclick="selectColor('#e91e63', this)"></div>
         </div>
 
-        <canvas id="paintCanvas" width="300" height="200"></canvas>
+        <div class="tools">
+            <button class="tool-btn eraser" onclick="enableEraser(this)">🧽 Silgi</button>
+            <button class="tool-btn clear" onclick="clearCanvas()">🗑️ Temizle</button>
+        </div>
+
+        <canvas id="paintCanvas" width="320" height="240"></canvas>
         <div id="displayName" class="name-output">SANATÇI</div>
         
         <br>
-        <button class="btn" onclick="downloadImage()" style="background: #4caf50; font-size: 15px; padding: 10px 20px;">📸 Boyadığımı İndir / Çıktı Al</button>
+        <button class="btn" onclick="downloadImage()" style="background: #4caf50; font-size: 15px; padding: 10px 20px;">📸 Boyadığımı İndir</button>
     </div>
 
     <script>
         const canvas = document.getElementById('paintCanvas');
         const ctx = canvas.getContext('2d');
+        let painting = false;
         let currentColor = '#ff5722';
+        let currentLineWidth = 12;
 
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = '#333';
-        ctx.strokeRect(20, 20, 260, 160);
-        ctx.font = "16px Arial";
-        ctx.fillStyle = "#666";
-        ctx.fillText("Boyama Alanı (Dokun & Boya)", 50, 105);
+        // Hazır sevimli ayı boyama şablonunu çizen fonksiyon
+        function drawTemplate() {
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#333';
 
-        function selectColor(color) { currentColor = color; }
+            // Dış Çerçeve
+            ctx.strokeRect(10, 10, 300, 220);
 
-        canvas.addEventListener('click', function(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            ctx.fillStyle = currentColor;
+            // Ayı Kafası (Orta)
             ctx.beginPath();
-            ctx.arc(x, y, 15, 0, Math.PI * 2);
+            ctx.arc(160, 120, 50, 0, Math.PI * 2); // Kafa
+            ctx.fillStyle = '#fff';
             ctx.fill();
-        });
+            ctx.stroke();
+
+            // Sol Kulak
+            ctx.beginPath();
+            ctx.arc(125, 80, 20, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Sağ Kulak
+            ctx.beginPath();
+            ctx.arc(195, 80, 20, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Gözler
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.arc(145, 110, 5, 0, Math.PI * 2);
+            ctx.arc(175, 110, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Burun ve Ağız
+            ctx.beginPath();
+            ctx.arc(160, 130, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(160, 135, 12, 0, Math.PI);
+            ctx.stroke();
+
+            // Yazı rehberi
+            ctx.font = "12px Arial";
+            ctx.fillStyle = "#aaa";
+            ctx.fillText("Sevimli Ayıcığı Boya 🧸", 100, 205);
+        }
+        drawTemplate();
+
+        function startPosition(e) {
+            painting = true;
+            draw(e);
+        }
+
+        function endPosition() {
+            painting = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!painting) return;
+            e.preventDefault();
+            
+            const rect = canvas.getBoundingClientRect();
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+
+            if (e.touches && e.touches[0]) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            }
+
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            ctx.lineWidth = currentLineWidth;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = currentColor;
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+
+        canvas.addEventListener('touchstart', startPosition, { passive: false });
+        canvas.addEventListener('touchend', endPosition);
+        canvas.addEventListener('touchmove', draw, { passive: false });
+
+        function selectColor(color, element) {
+            currentColor = color;
+            currentLineWidth = 12;
+            document.querySelectorAll('.color-box').forEach(b => b.classList.remove('active'));
+            if(element) element.classList.add('active');
+        }
+
+        function enableEraser(element) {
+            currentColor = '#ffffff';
+            currentLineWidth = 22;
+            document.querySelectorAll('.color-box').forEach(b => b.classList.remove('active'));
+        }
+
+        function clearCanvas() {
+            drawTemplate();
+        }
 
         function updateName() {
             const nameVal = document.getElementById('childName').value;
@@ -83,7 +188,7 @@
 
         function downloadImage() {
             const link = document.createElement('a');
-            link.download = 'boyama-calismasi.png';
+            link.download = 'minik-sanatci-boyama.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
