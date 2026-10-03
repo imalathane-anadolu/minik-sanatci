@@ -1,1 +1,69 @@
 
+    <header>
+        <h1>🎨 Ücretsiz Boyama Kitabı</h1>
+        <p>Hemen indir veya tarayıcında hemen boyamaya başla!</p>
+        <a href="#" class="btn">📥 Ücretsiz PDF'i İndir</a>
+    </header>
+
+    <div class="section">
+        <h2>✨ Küçük Sanatçı Atölyesi</h2>
+        <p>Çocuğun adını yaz, renkleri seç ve boyamaya başla!</p>
+        
+        <input type="text" id="childName" placeholder="Sanatçının Adı (Örn: ZEYNEP)" oninput="updateName()">
+        
+        <div class="palette">
+            <div class="color-box" style="background: #ff5722;" onclick="selectColor('#ff5722')"></div>
+            <div class="color-box" style="background: #4caf50;" onclick="selectColor('#4caf50')"></div>
+            <div class="color-box" style="background: #2196f3;" onclick="selectColor('#2196f3')"></div>
+            <div class="color-box" style="background: #ffeb3b;" onclick="selectColor('#ffeb3b')"></div>
+            <div class="color-box" style="background: #9c27b0;" onclick="selectColor('#9c27b0')"></div>
+            <div class="color-box" style="background: #ffffff; border: 2px solid #ccc;" onclick="selectColor('#ffffff')"></div>
+        </div>
+
+        <canvas id="paintCanvas" width="300" height="200"></canvas>
+        <div id="displayName" class="name-output">SANATÇI</div>
+        
+        <br>
+        <button class="btn" onclick="downloadImage()" style="background: #4caf50; font-size: 15px; padding: 10px 20px;">📸 Boyadığımı İndir / Çıktı Al</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('paintCanvas');
+        const ctx = canvas.getContext('2d');
+        let currentColor = '#ff5722';
+
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#333';
+        ctx.strokeRect(20, 20, 260, 160);
+        ctx.font = "16px Arial";
+        ctx.fillStyle = "#666";
+        ctx.fillText("Boyama Alanı (Dokun & Boya)", 50, 105);
+
+        function selectColor(color) { currentColor = color; }
+
+        canvas.addEventListener('click', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            ctx.fillStyle = currentColor;
+            ctx.beginPath();
+            ctx.arc(x, y, 15, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        function updateName() {
+            const nameVal = document.getElementById('childName').value;
+            document.getElementById('displayName').innerText = nameVal ? nameVal : 'SANATÇI';
+        }
+
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = 'boyama-calismasi.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    </script>
+</body>
+</html>
