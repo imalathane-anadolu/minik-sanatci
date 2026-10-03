@@ -24,6 +24,9 @@
         .section h2 { color: #e1e1e6; font-size: 13px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 
         .library-section { background: #29292e; padding: 12px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 100%; border: 1px solid #323238; margin-bottom: 12px; }
+        
+        /* Tam ekran modunda boyama kitapları bölümünü gizle */
+        #appContainer:fullscreen .library-section { display: none !important; }
 
         .right-canvas-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 480px; order: 2; max-height: 88vh; overflow-y: auto; padding-right: 4px; }
         #appContainer:fullscreen .right-canvas-panel { order: 2; width: auto; max-height: 96vh; overflow-y: auto; padding-right: 6px; }
@@ -138,7 +141,7 @@
                     <button class="tool-btn bucket" id="bucketBtn" onclick="enableBucket()">🪣 Dolgu</button>
                     <button class="tool-btn eyedropper" id="eyedropperBtn" onclick="enableEyedropper()">🎨 Renk Seç</button>
                     <button class="tool-btn stamp" onclick="enableStamp('⭐')">⭐ Yıldız</button>
-                    <button class="tool-btn stamp" onclick="enableStamp('❤️')">❤️ Kalp</button>
+                    <button class="tool-btn stamp" onclick="enableStamp('❤️️')">❤️ Kalp</button>
                     <button class="tool-btn eraser" onclick="enableEraser()">🧽 Silgi</button>
                 </div>
 
