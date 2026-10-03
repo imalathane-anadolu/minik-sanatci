@@ -1,6 +1,3 @@
-Pardon kanka, şimdi taşlar yerine oturdu! PDF kitap indirme alanından değil, sağdaki tuvalin hemen altında bulunan "📸 Şaheseri Kaydet & Kutla" butonundan bahsediyormuşsun. Tam ekrana geçince o buton ve alt kısım ekranın dışında kaldığı için görünmüyormuş.
-Hemen düzenledim: "Şaheseri Kaydet & Kutla" butonunu ve alt alanı sağ panelin en üstüne (tuvalin hemen altına) aldım, ayrıca boyama kitapları (PDF) menüsünü de ilk konumuna yani en üste geri taşıdım.
-Artık ister tam ekranda ol ister normal modda, kaydet butonu her zaman gözünün önünde olacak. Güncel kodun:
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -28,8 +25,10 @@ Artık ister tam ekranda ol ister normal modda, kaydet butonu her zaman gözün�
 
         .library-section { background: #29292e; padding: 12px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 100%; border: 1px solid #323238; margin-bottom: 12px; }
 
-        .right-canvas-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 480px; order: 2; }
-        #appContainer:fullscreen .right-canvas-panel { order: 2; width: auto; }
+        .right-canvas-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 480px; order: 2; max-height: 88vh; overflow-y: auto; padding-right: 4px; }
+        #appContainer:fullscreen .right-canvas-panel { order: 2; width: auto; max-height: 96vh; overflow-y: auto; padding-right: 6px; }
+        .right-canvas-panel::-webkit-scrollbar { width: 5px; }
+        .right-canvas-panel::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
 
         .left-control-panel { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 460px; gap: 0px; order: 3; max-height: 88vh; overflow-y: auto; padding-right: 4px; }
         #appContainer:fullscreen .left-control-panel { max-height: 96vh; overflow-y: auto; padding-right: 6px; order: 1; max-width: 340px; }
@@ -93,19 +92,19 @@ Artık ister tam ekranda ol ister normal modda, kaydet butonu her zaman gözün�
             <div class="canvas-container" id="canvasContainer">
                 <canvas id="paintCanvas" width="460" height="310"></canvas>
             </div>
-            <!-- Kaydet / Kutla Butonu Tuvalin Hemen Altına Taşındı -->
+            <!-- Kaydet / Kutla Butonu Tuvalin Hemen Altında -->
             <div style="width: 100%; margin-top: 10px;">
                 <button class="btn indir" onclick="downloadImage()">📸 Şaheseri Kaydet & Kutla 🎉</button>
             </div>
         </div>
 
         <div class="left-control-panel">
-            <!-- Boyama Kitapları (PDF) Menüsü İlk Konumuna (En Üste) Geri Alındı -->
+            <!-- Boyama Kitapları (PDF) Menüsü -->
             <div class="library-section">
                 <h2>📚 Boyama Kitapları</h2>
                 <div style="font-size: 26px; margin: 2px 0;">🧸🎨✨</div>
                 <div class="tools" style="margin-top: 4px;">
-                    <a href="boyama-kitap-01.pdf" class="btn boyama1" target="_blank" style="width: 48%; font-size: 11px; padding: 7px; margin:0;">🖍️️ Kitap 1 İndir</a>
+                    <a href="boyama-kitap-01.pdf" class="btn boyama1" target="_blank" style="width: 48%; font-size: 11px; padding: 7px; margin:0;">🖍 Kitap 1 İndir</a>
                     <a href="boyama-kitap-02.pdf" class="btn boyama2" target="_blank" style="width: 48%; font-size: 11px; padding: 7px; margin:0;">🖍️ Kitap 2 İndir</a>
                 </div>
             </div>
@@ -886,4 +885,3 @@ Artık ister tam ekranda ol ister normal modda, kaydet butonu her zaman gözün�
     </script>
 </body>
 </html>
-
