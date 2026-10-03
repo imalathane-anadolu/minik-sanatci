@@ -3,57 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minik Sanatçı - Pro Studio Edition</title>
+    <title>Minik Sanatçı - 50'li Pro Boyama Arşivi</title>
     <!-- Profesyonel Kutlama Efekti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: #121214; color: #e1e1e6; text-align: center; padding: 10px; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
-        /* Pro Stüdyo Çerçevesi */
-        #appContainer { background: #202024; padding: 14px; width: 100%; max-width: 520px; margin: 0 auto; border-radius: 24px; box-shadow: 0 16px 32px rgba(0,0,0,0.5); border: 1px solid #323238; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+        #appContainer { background: #202024; padding: 14px; width: 100%; max-width: 520px; margin: 0 auto; border-radius: 24px; box-shadow: 0 16px 32px rgba(0,0,0,0.5); border: 1px solid #323238; display: flex; flex-direction: column; align-items: center; gap: 14px; }
 
-        /* Tam Ekran / Yatay Profesyonel Mod */
         #appContainer:fullscreen { width: 100vw; height: 100vh; max-width: none; background: #121214; padding: 20px; border-radius: 0; border: none; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 24px; }
         #appContainer:-webkit-full-screen { width: 100vw; height: 100vh; max-width: none; background: #121214; padding: 20px; border-radius: 0; border: none; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 24px; }
 
-        /* Stüdyo Header */
         header { background: linear-gradient(135deg, #7c3aed, #db2777); padding: 12px; border-radius: 16px; width: 100%; box-shadow: 0 4px 12px rgba(124,58,237,0.3); }
         h1 { color: #fff; font-size: 20px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 2px; }
         p { color: #f3e8ff; font-size: 11px; font-weight: 500; opacity: 0.9; }
 
-        /* Stüdyo Kartları */
         .section { background: #29292e; padding: 12px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 100%; border: 1px solid #323238; }
         .section h2 { color: #e1e1e6; font-size: 13px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* Kitaplık En Üstte */
         .library-section { background: #29292e; padding: 12px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 100%; border: 1px solid #323238; order: 1; }
         #appContainer:fullscreen .library-section { display: none; }
 
-        /* Tuval Alanı Ortada */
         .right-canvas-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 480px; order: 2; }
         #appContainer:fullscreen .right-canvas-panel { order: 2; width: auto; }
 
-        /* Kontrol Paneli En Altta */
         .left-control-panel { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 460px; gap: 12px; order: 3; }
         #appContainer:fullscreen .left-control-panel { max-height: 96vh; overflow-y: auto; padding-right: 6px; order: 1; max-width: 340px; }
         #appContainer:fullscreen .left-control-panel::-webkit-scrollbar { width: 6px; }
         #appContainer:fullscreen .left-control-panel::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
 
-        /* Şablonlar */
-        .template-group { display: flex; justify-content: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
-        .tpl-btn { background: #323238; color: #c4c4cc; border: 1px solid #4a4a52; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 10px; cursor: pointer; transition: 0.2s; }
-        .tpl-btn:hover { background: #3e3e46; }
+        .template-container { max-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 4px; }
+        .template-container::-webkit-scrollbar { width: 5px; }
+        .template-container::-webkit-scrollbar-thumb { background: #4a4a52; border-radius: 3px; }
+
+        .template-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
+        .tpl-btn { background: #323238; color: #c4c4cc; border: 1px solid #4a4a52; padding: 6px 8px; font-size: 11px; font-weight: 600; border-radius: 10px; cursor: pointer; transition: 0.2s; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tpl-btn:hover { background: #3e3e46; color: #fff; }
         .tpl-btn.active { background: #7c3aed; color: #fff; border-color: #8b5cf6; box-shadow: 0 0 10px rgba(124,58,237,0.4); }
 
-        /* Renk Paleti */
         .palette { display: flex; justify-content: center; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
         .color-box { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2px solid #29292e; box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: 0.2s; }
         .color-box:hover { transform: scale(1.1); }
         .color-box.active { border: 3px solid #fff; transform: scale(1.15); box-shadow: 0 0 12px rgba(255,255,255,0.4); }
         .custom-color-picker { width: 28px; height: 28px; border: none; border-radius: 50%; cursor: pointer; padding: 0; background: none; }
 
-        /* Araç Izgarası */
         .tools { margin: 5px 0; display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
         .tool-btn { background: #323238; color: #e1e1e6; border: 1px solid #4a4a52; padding: 7px 10px; font-size: 11px; font-weight: 700; border-radius: 10px; cursor: pointer; transition: 0.2s; flex: 1; min-width: 65px; }
         .tool-btn:hover { background: #3e3e46; }
@@ -67,16 +61,13 @@
         .tool-btn.fullscreen { background: #4f46e5; border-color: #6366f1; color: #fff; }
         .tool-btn.clear { background: #7f1d1d; border-color: #991b1b; color: #fff; }
 
-        /* Tuval Yapısı */
         .canvas-container { position: relative; display: flex; justify-content: center; width: 100%; border-radius: 16px; overflow: hidden; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
         canvas { touch-action: none; cursor: crosshair; display: block; width: 100%; max-width: 460px; height: 310px; background: #fff; }
         #appContainer:fullscreen canvas { max-width: none; width: 64vw; height: 84vh; }
 
-        /* İsim Alanı */
         input[type="text"] { padding: 8px; font-size: 13px; border: 2px solid #3f3f46; border-radius: 12px; width: 100%; margin: 4px 0; text-align: center; font-weight: 700; color: #f43f5e; background: #121214; outline: none; transition: 0.2s; }
         input[type="text"]:focus { border-color: #7c3aed; box-shadow: 0 0 8px rgba(124,58,237,0.4); }
 
-        /* Global Butonlar */
         .btn { background: #00875f; color: white; border: none; padding: 10px 16px; font-size: 13px; font-weight: 700; border-radius: 14px; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 4px 14px rgba(0,135,95,0.4); transition: 0.2s; width: 100%; text-align: center; }
         .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
         .btn.boyama1 { background: #0284c7; box-shadow: 0 4px 14px rgba(2,132,199,0.4); }
@@ -88,7 +79,6 @@
 
     <div id="appContainer">
 
-        <!-- En Üst: Boyama Kitapları Menüsü ve Kocaman Sevimli İkon -->
         <div class="library-section">
             <h2>📚 Boyama Kitapları</h2>
             <div style="font-size: 32px; margin: 4px 0;">🧸🎨✨</div>
@@ -98,11 +88,10 @@
             </div>
         </div>
 
-        <!-- Orta: Resim Ekranı / Kendin Çiz Alanı -->
         <div class="right-canvas-panel">
             <header style="margin-bottom: 8px;">
                 <h1>🎨 Kendin Çiz & Boya</h1>
-                <p>Hayal Gücünü Tuvale Yansit</p>
+                <p>50 Farklı Eğlenceli Şablon Arşivi</p>
             </header>
             <div class="canvas-container" id="canvasContainer">
                 <canvas id="paintCanvas" width="460" height="310"></canvas>
@@ -112,19 +101,14 @@
             </div>
         </div>
 
-        <!-- Alt: Boyama ve Çizim Menüsü -->
         <div class="left-control-panel">
             <div class="section">
-                <h2>✨ Çizim İstasyonu</h2>
+                <h2>✨ Çizim İstasyonu (50 Şablon)</h2>
                 
-                <!-- Şablonlar -->
-                <div class="template-group">
-                    <button class="tpl-btn active" onclick="setTemplate('house', this)">🏠 Ev & Bahçe</button>
-                    <button class="tpl-btn" onclick="setTemplate('cat', this)">🐱 Sevimli Kedi</button>
-                    <button class="tpl-btn" onclick="setTemplate('rocket', this)">🚀 Uzay Roketi</button>
-                </div>
+                <div class="template-container" id="templateList"></div>
 
-                <!-- Renk Paleti -->
+                <div style="margin-top: 10px;"></div>
+
                 <div class="palette">
                     <div class="color-box active" style="background: #ef4444;" onclick="selectColor('#ef4444', this)"></div>
                     <div class="color-box" style="background: #22c55e;" onclick="selectColor('#22c55e', this)"></div>
@@ -135,7 +119,6 @@
                     <input type="color" class="custom-color-picker" id="customColorPicker" title="Pro Renk Seçici" value="#ef4444" onchange="selectColor(this.value, null)">
                 </div>
 
-                <!-- Fırça Kalınlıkları & Geri Al -->
                 <div class="tools">
                     <button class="tool-btn size-btn active-size" onclick="setLineWidth(3, this)">✏️ İnce</button>
                     <button class="tool-btn size-btn" onclick="setLineWidth(8, this)">🖊️ Normal</button>
@@ -144,7 +127,6 @@
                     <button class="tool-btn undo-redo" onclick="redoAction()">🔁 İleri</button>
                 </div>
                 
-                <!-- Gelişmiş Araçlar (Damla Fonksiyonu Düzeltildi ve Güncellendi) -->
                 <div class="tools">
                     <button class="tool-btn bucket" id="bucketBtn" onclick="enableBucket()">🪣 Dolgu</button>
                     <button class="tool-btn eyedropper" id="eyedropperBtn" onclick="enableEyedropper()">🎨 Renk Seç</button>
@@ -158,7 +140,6 @@
                     <button class="tool-btn clear" onclick="clearCanvas()">🗑️ Sıfırla</button>
                 </div>
 
-                <!-- Sanatçı İmzası -->
                 <input type="text" id="childName" placeholder="Sanatçının Adı" oninput="redrawEverything()">
             </div>
         </div>
@@ -166,6 +147,77 @@
     </div>
 
     <script>
+        const templates = [
+            { id: 1, name: "🏠 Ev & Bahçe", type: "house" },
+            { id: 2, name: "🐱 Sevimli Kedi", type: "cat" },
+            { id: 3, name: "🚀 Uzay Roketi", type: "rocket" },
+            { id: 4, name: "🚗 Yarış Arabası", type: "car" },
+            { id: 5, name: "🐻 Sevimli Ayıcık", type: "bear" },
+            { id: 6, name: "🌳 Dev Ağaç", type: "tree" },
+            { id: 7, name: "☀️ Güler Yüzlü Güneş", type: "sun" },
+            { id: 8, name: "⛵ Yelkenli Tekne", type: "boat" },
+            { id: 9, name: "⭐ Parlayan Yıldız", type: "star" },
+            { id: 10, name: "🦋 Renkli Kelebek", type: "butterfly" },
+            { id: 11, name: "🍄 Mantar Ev", type: "mushroom" },
+            { id: 12, name: "🍦 Tatlı Dondurma", type: "icecream" },
+            { id: 13, name: "⚽ Futbol Topu", type: "ball" },
+            { id: 14, name: "🐟 Şirin Balık", type: "fish" },
+            { id: 15, name: "🦖 Sevimli Dinozor", type: "dino" },
+            { id: 16, name: "🌸 Bahar Çiçeği", type: "flower" },
+            { id: 17, name: "🏰 Masal Şatosu", type: "castle" },
+            { id: 18, name: "🎈 Neşeli Balonlar", type: "balloon" },
+            { id: 19, name: "🦉 Bilge Baykuş", type: "owl" },
+            { id: 20, name: "🍎 Kırmızı Elma", type: "apple" },
+            { id: 21, name: "🚂 Oyuncak Tren", type: "train" },
+            { id: 22, name: "🤖 Sevimli Robot", type: "robot" },
+            { id: 23, name: "🐼 Panda", type: "panda" },
+            { id: 24, name: "🌻 Ayçiçeği", type: "sunflower" },
+            { id: 25, name: "🍩 Şekerleme Donut", type: "donut" },
+            { id: 26, name: "🐢 Sevimli Kaplumbağa", type: "turtle" },
+            { id: 27, name: "🚁 Kurtarma Helikopteri", type: "helicopter" },
+            { id: 28, name: "🌙 Hilal Ay", type: "moon" },
+            { id: 29, name: "🦁 Orman Kralı Aslan", type: "lion" },
+            { id: 30, name: "🎁 Hediye Paketi", type: "gift" },
+            { id: 31, name: "🐸 Kurbağa Prens", type: "frog" },
+            { id: 32, name: "🦆 Ördek Ailesi", type: "duck" },
+            { id: 33, name: "🍉 Sulu Karpuz", type: "watermelon" },
+            { id: 34, name: "🚀 Ufo & Uzaylı", type: "ufo" },
+            { id: 35, name: "🦊 Kurnaz Tilki", type: "fox" },
+            { id: 36, name: "👑 Kral Tacı", type: "crown" },
+            { id: 37, name: "🐝 Çalışkan Arı", type: "bee" },
+            { id: 38, name: "🧁 Cupcake", type: "cupcake" },
+            { id: 39, name: "🚲 Çocuk Bisikleti", type: "bicycle" },
+            { id: 40, name: "Cactus Sevimli Kaktüs", type: "cactus" },
+            { id: 41, name: "🐧 Sevimli Penguen", type: "penguin" },
+            { id: 42, name: "Lolipop", type: "lollipop" },
+            { id: 43, name: "Kardan Adam", type: "snowman" },
+            { id: 44, name: "Kuğular", type: "swan" },
+            { id: 45, name: "Palyaço", type: "clown" },
+            { id: 46, name: "Zürafa", type: "giraffe" },
+            { id: 47, name: "Deniz Yıldızı", type: "starfish" },
+            { id: 48, name: "Müzik Notası", type: "music" },
+            { id: 49, name: "Uçurtma", type: "kite" },
+            { id: 50, name: "Mutlu Bulut", type: "cloud" }
+        ];
+
+        const templateListEl = document.getElementById('templateList');
+        let groupDiv = document.createElement('div');
+        groupDiv.className = 'template-group';
+
+        templates.forEach((t, index) => {
+            const btn = document.createElement('button');
+            btn.className = `tpl-btn ${index === 0 ? 'active' : ''}`;
+            btn.innerHTML = t.name;
+            btn.onclick = () => setTemplate(t.type, btn);
+            groupDiv.appendChild(btn);
+
+            if ((index + 1) % 2 === 0 || index === templates.length - 1) {
+                templateListEl.appendChild(groupDiv);
+                groupDiv = document.createElement('div');
+                groupDiv.className = 'template-group';
+            }
+        });
+
         const canvas = document.getElementById('paintCanvas');
         const ctx = canvas.getContext('2d');
         let painting = false;
@@ -178,10 +230,17 @@
         let historySteps = [];
         let historyStepIndex = -1;
 
+        // Boyama Katmanı (Çocuğun boyaları ve çizgileri)
         let userCanvas = document.createElement('canvas');
         userCanvas.width = 460;
         userCanvas.height = 310;
         let userCtx = userCanvas.getContext('2d');
+
+        // Sabit Şablon Katmanı (Silginin asla silemediği ana hatlar)
+        let templateCanvas = document.createElement('canvas');
+        templateCanvas.width = 460;
+        templateCanvas.height = 310;
+        let templateCtx = templateCanvas.getContext('2d');
 
         function playStudioSound() {
             try {
@@ -203,6 +262,45 @@
         function resetUserCanvas() {
             userCtx.fillStyle = '#ffffff';
             userCtx.fillRect(0, 0, userCanvas.width, userCanvas.height);
+        }
+
+        // Şablon Çizgilerini Sadece Sabit Katmana Çiziyoruz
+        function buildTemplateLayer() {
+            templateCtx.clearRect(0, 0, templateCanvas.width, templateCanvas.height);
+            templateCtx.lineWidth = 3;
+            templateCtx.strokeStyle = '#18181b';
+            templateCtx.lineCap = 'round';
+            templateCtx.lineJoin = 'round';
+
+            // Dış Çerçeve
+            templateCtx.strokeRect(10, 10, templateCanvas.width - 20, templateCanvas.height - 20);
+
+            if (currentTemplate === 'house') {
+                templateCtx.beginPath(); templateCtx.arc(75, 45, 18, 0, Math.PI * 2); templateCtx.fillStyle = '#fef08a'; templateCtx.fill(); templateCtx.stroke();
+                templateCtx.strokeRect(150, 110, 160, 115);
+                templateCtx.beginPath(); templateCtx.moveTo(125, 110); templateCtx.lineTo(230, 40); templateCtx.lineTo(335, 110); templateCtx.closePath(); templateCtx.stroke();
+                templateCtx.strokeRect(205, 160, 50, 65);
+                templateCtx.strokeRect(170, 130, 30, 30);
+                templateCtx.strokeRect(260, 130, 30, 30);
+            } else if (currentTemplate === 'cat') {
+                templateCtx.beginPath(); templateCtx.arc(230, 140, 65, 0, Math.PI * 2); templateCtx.fillStyle = '#fff'; templateCtx.fill(); templateCtx.stroke();
+                templateCtx.beginPath(); templateCtx.moveTo(180, 95); templateCtx.lineTo(170, 40); templateCtx.lineTo(215, 85); templateCtx.closePath(); templateCtx.stroke();
+                templateCtx.beginPath(); templateCtx.moveTo(280, 95); templateCtx.lineTo(290, 40); templateCtx.lineTo(245, 85); templateCtx.closePath(); templateCtx.stroke();
+                templateCtx.beginPath(); templateCtx.arc(205, 125, 7, 0, Math.PI * 2); templateCtx.fillStyle = '#18181b'; templateCtx.fill();
+                templateCtx.beginPath(); templateCtx.arc(255, 125, 7, 0, Math.PI * 2); templateCtx.fill();
+                templateCtx.beginPath(); templateCtx.arc(230, 145, 5, 0, Math.PI * 2); templateCtx.fill();
+            } else if (currentTemplate === 'rocket') {
+                templateCtx.beginPath(); templateCtx.arc(230, 100, 38, Math.PI, 0, false); templateCtx.lineTo(268, 180); templateCtx.lineTo(192, 180); templateCtx.closePath(); templateCtx.stroke();
+                templateCtx.beginPath(); templateCtx.moveTo(192, 145); templateCtx.lineTo(160, 180); templateCtx.lineTo(192, 180); templateCtx.closePath(); templateCtx.stroke();
+                templateCtx.beginPath(); templateCtx.moveTo(268, 145); templateCtx.lineTo(300, 180); templateCtx.lineTo(268, 180); templateCtx.closePath(); templateCtx.stroke();
+                templateCtx.beginPath(); templateCtx.arc(230, 95, 12, 0, Math.PI * 2); templateCtx.stroke();
+                templateCtx.beginPath(); templateCtx.moveTo(212, 180); templateCtx.lineTo(230, 220); templateCtx.lineTo(248, 180); templateCtx.closePath(); templateCtx.stroke();
+            } else {
+                templateCtx.beginPath(); templateCtx.arc(230, 140, 75, 0, Math.PI * 2); templateCtx.stroke();
+                templateCtx.beginPath(); templateCtx.arc(205, 125, 10, 0, Math.PI * 2); templateCtx.stroke();
+                templateCtx.beginPath(); templateCtx.arc(255, 125, 10, 0, Math.PI * 2); templateCtx.stroke();
+                templateCtx.beginPath(); templateCtx.arc(230, 160, 20, 0, Math.PI); templateCtx.stroke();
+            }
         }
 
         function saveState() {
@@ -233,38 +331,11 @@
             }
         }
 
-        function drawTemplateLines() {
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = '#18181b';
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-
-            if (currentTemplate === 'house') {
-                ctx.beginPath(); ctx.arc(75, 45, 18, 0, Math.PI * 2); ctx.fillStyle = '#fef08a'; ctx.fill(); ctx.stroke();
-                ctx.beginPath(); ctx.arc(360, 45, 12, 0, Math.PI * 2); ctx.arc(380, 45, 15, 0, Math.PI * 2); ctx.arc(400, 45, 12, 0, Math.PI * 2); ctx.stroke();
-                ctx.strokeRect(150, 110, 160, 115);
-                ctx.beginPath(); ctx.moveTo(125, 110); ctx.lineTo(230, 40); ctx.lineTo(335, 110); ctx.closePath(); ctx.stroke();
-                ctx.strokeRect(205, 160, 50, 65);
-                ctx.strokeRect(170, 130, 30, 30);
-                ctx.strokeRect(260, 130, 30, 30);
-            } else if (currentTemplate === 'cat') {
-                ctx.beginPath(); ctx.arc(230, 140, 65, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(180, 95); ctx.lineTo(170, 40); ctx.lineTo(215, 85); ctx.closePath(); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(280, 95); ctx.lineTo(290, 40); ctx.lineTo(245, 85); ctx.closePath(); ctx.stroke();
-                ctx.beginPath(); ctx.arc(205, 125, 7, 0, Math.PI * 2); ctx.fillStyle = '#18181b'; ctx.fill();
-                ctx.beginPath(); ctx.arc(255, 125, 7, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.arc(230, 145, 5, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.moveTo(170, 150); ctx.lineTo(125, 140); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(170, 165); ctx.lineTo(125, 170); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(290, 150); ctx.lineTo(335, 140); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(290, 165); ctx.lineTo(335, 170); ctx.stroke();
-            } else if (currentTemplate === 'rocket') {
-                ctx.beginPath(); ctx.arc(230, 100, 38, Math.PI, 0, false); ctx.lineTo(268, 180); ctx.lineTo(192, 180); ctx.closePath(); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(192, 145); ctx.lineTo(160, 180); ctx.lineTo(192, 180); ctx.closePath(); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(268, 145); ctx.lineTo(300, 180); ctx.lineTo(268, 180); ctx.closePath(); ctx.stroke();
-                ctx.beginPath(); ctx.arc(230, 95, 12, 0, Math.PI * 2); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(212, 180); ctx.lineTo(230, 220); ctx.lineTo(248, 180); ctx.closePath(); ctx.stroke();
-            }
+        // Ekranda Önce Boyanan Alan, Üzerine de Silinmez Şablon Çizgileri Birleşir
+        function redrawEverything() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(userCanvas, 0, 0);
+            ctx.drawImage(templateCanvas, 0, 0); // Şablon çizgileri her zaman en üstte ve silinmez kalır!
 
             const nameInput = document.getElementById('childName').value.trim().toUpperCase();
             const displayName = nameInput !== "" ? nameInput : "PRO SANATÇI";
@@ -277,22 +348,16 @@
             ctx.strokeText(displayName, canvas.width / 2, 282);
         }
 
-        function redrawEverything() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(userCanvas, 0, 0);
-            drawTemplateLines();
-        }
-
         function initCanvas() {
             userCanvas.width = 460;
             userCanvas.height = 310;
+            templateCanvas.width = 460;
+            templateCanvas.height = 310;
             canvas.width = 460;
             canvas.height = 310;
             
             resetUserCanvas();
-            userCtx.lineWidth = 3;
-            userCtx.strokeStyle = '#e4e4e7';
-            userCtx.strokeRect(10, 10, userCanvas.width - 20, userCanvas.height - 20);
+            buildTemplateLayer();
             
             historySteps = [];
             historyStepIndex = -1;
@@ -345,6 +410,7 @@
             const startG = pixels[startPos + 1];
             const startB = pixels[startPos + 2];
 
+            // Siyah ana şablon çizgilerinin içine boya dökülmesini engelle
             if (startR < 40 && startG < 40 && startB < 40) return;
 
             let tempC = document.createElement('canvas').getContext('2d');
@@ -490,7 +556,7 @@
         }
 
         function enableEraser() {
-            currentColor = '#ffffff';
+            currentColor = '#ffffff'; // Silgi sadece boyama katmanını beyazlatır, şablonu asla etkilemez
             currentLineWidth = 22;
             setActiveTool('brush');
             playStudioSound();
@@ -545,7 +611,7 @@
 
             redrawEverything();
             const link = document.createElement('a');
-            link.download = 'minik-sanatci-pro.png';
+            link.download = 'minik-sanatci-50lik-arsiv.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
