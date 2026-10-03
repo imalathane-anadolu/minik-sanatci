@@ -106,7 +106,7 @@
         .menu-btn:nth-child(3) { border-color: #1e90ff; box-shadow: 0 8px 0 #1e90ff; color: #1e90ff; }
         .menu-btn:nth-child(3):active { box-shadow: 0 2px 0 #1e90ff; }
 
-        /* --- 2. BOYAMA KİTAPLARI EKRANI (ŞABLON SEÇİMİ) --- */
+        /* --- 2. BOYAMA KİTAPLARI EKRANI (PDF LİSTESİ) --- */
         .header-bar {
             width: 100%;
             display: flex;
@@ -140,42 +140,60 @@
 
         .templates-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
             width: 100%;
-            max-height: 75vh;
-            overflow-y: auto;
             padding: 10px;
+            justify-content: center;
         }
 
         .template-card {
             background: white;
             border: 3px solid #ced6e0;
-            border-radius: 15px;
-            padding: 10px;
+            border-radius: 20px;
+            padding: 20px;
             cursor: pointer;
             text-align: center;
             transition: transform 0.2s, border-color 0.2s;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
 
         .template-card:hover {
-            transform: scale(1.05);
+            transform: scale(1.03);
             border-color: #ff4757;
         }
 
-        .template-card canvas {
-            width: 100%;
-            height: 100px;
-            background: #fff;
-            border-radius: 10px;
+        .pdf-icon {
+            font-size: 4rem;
         }
 
         .template-card span {
             display: block;
-            margin-top: 5px;
-            font-size: 0.9rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            color: #57606f;
+            color: #2f3542;
+        }
+
+        .pdf-btn {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 0 #d63031;
+        }
+
+        .pdf-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
         }
 
         /* --- 3. ÇİZİM / BOYAMA UYGULAMA EKRANI --- */
@@ -267,7 +285,7 @@
             border-color: #2f3542;
         }
 
-        /* Eylem Butonları (Kaydet, Tam Ekran vb.) */
+        /* Eylem Butonları */
         .action-bar {
             display: flex;
             gap: 10px;
@@ -311,20 +329,31 @@
         <h1 class="home-title">🎨 Minik Sanatçı 🖌️</h1>
         <div class="menu-container">
             <button class="menu-btn" onclick="openScreen('books-screen')">📚 Boyama Kitapları</button>
-            <button class="menu-btn" onclick="startDrawingApp(null)">✏️ Kendin Çiz</button>
+            <button class="menu-btn" onclick="startDrawingApp()">✏️ Kendin Çiz</button>
             <button class="menu-btn" onclick="openSizdenGelenler()">🌟 Sizden Gelenler</button>
         </div>
     </div>
 
-    <!-- 2. BOYAMA KİTAPLARI EKRANI (50 ŞABLON) -->
+    <!-- 2. BOYAMA KİTAPLARI EKRANI (PDFLER) -->
     <div id="books-screen" class="screen">
         <div class="header-bar">
             <button class="back-btn" onclick="openScreen('home-screen')">⬅️ Ana Sayfa</button>
-            <h2 class="section-title" style="margin:0;">Boyama Kitabı Seç</h2>
+            <h2 class="section-title" style="margin:0;">Boyama Kitapları</h2>
             <div style="width: 80px;"></div>
         </div>
-        <div class="templates-grid" id="templates-grid">
-            <!-- 50 Adet Şablon JavaScript ile Dinamik Eklenecek -->
+        <div class="templates-grid">
+            <!-- 1. Kitap -->
+            <div class="template-card" onclick="openPDF('boyama-kitap-01.pdf')">
+                <div class="pdf-icon">📕</div>
+                <span>Boyama Kitabı 1</span>
+                <button class="pdf-btn">Kitabı Aç / İndir</button>
+            </div>
+            <!-- 2. Kitap -->
+            <div class="template-card" onclick="openPDF('boyama-kitap-02.pdf')">
+                <div class="pdf-icon">📘</div>
+                <span>Boyama Kitabı 2</span>
+                <button class="pdf-btn">Kitabı Aç / İndir</button>
+            </div>
         </div>
     </div>
 
@@ -332,7 +361,7 @@
     <div id="app-screen" class="screen">
         <div class="header-bar">
             <button class="back-btn" onclick="openScreen('home-screen')">⬅️ Ana Sayfa</button>
-            <h2 class="section-title" id="canvas-title" style="margin:0;">Çizim Alanı</h2>
+            <h2 class="section-title" id="canvas-title" style="margin:0;">Kendin Çiz</h2>
             <div style="width: 80px;"></div>
         </div>
 
@@ -361,7 +390,7 @@
 
             <!-- Eylem Butonları -->
             <div class="action-bar">
-                <button class="action-btn clear" onclick="clearCanvas()">🗑️ Temizle</button>
+                <button class="action-btn clear" onclick="clearCanvas()">🗑️️ Temizle</button>
                 <button class="action-btn fullscreen" onclick="toggleFullScreen()">📺 Tam Ekran</button>
                 <button class="action-btn" onclick="saveImage()">💾 Kaydet</button>
             </div>
@@ -373,9 +402,11 @@
         function openScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
-            if(screenId === 'books-screen') {
-                renderTemplates();
-            }
+        }
+
+        // --- PDF AÇMA ---
+        function openPDF(fileName) {
+            window.open(fileName, '_blank');
         }
 
         // --- SİZDEN GELENLER (MAİL YÖNLENDİRME) ---
@@ -384,53 +415,6 @@
             const subject = encodeURIComponent("Sizden Gelenler - Resmim");
             const body = encodeURIComponent("Merhaba,\n\nÇocuğumun yaptığı resmi ekte gönderiyorum. Sizden Gelenler köşenizde paylaşmanız dileğiyle!\n\nSevgiler.");
             window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-        }
-
-        // --- 50 ADET BOYAMA ŞABLONU OLUŞTURUCU ---
-        const templateCategories = ["Ev", "Kedi", "Köpek", "Araba", "Roket", "Kelebek", "Balık", "Ayı", "Çiçek", "Gemi", "Uçak", "Ağaç", "Aslan", "Fil", "Zürafa", "Robot", "Kardan Adam", "Dinozor", "Güneş", "Bulut", "Yıldız", "Kalp", "Bisiklet", "Tren", "Mantar", "Kuzu", "Kurbağa", "Ördek", "Maymun", "Penguen", "Kuş", "Kuğu", "Yunus", "Kaplumbağa", "Kaktüs", "Şato", "Korsan Gemisi", "Helikopter", "Traktör", "İtfaiye", "Polis Arabası", "Roket", "Pasta", "Dondurma", "Şeker", "Hediye", "Taç", "Kale", "Balon", "Uçurtma"];
-
-        function renderTemplates() {
-            const grid = document.getElementById('templates-grid');
-            if (grid.children.length > 0) return; // Zaten yüklendiyse tekrar yükleme
-
-            templateCategories.forEach((name, index) => {
-                const card = document.createElement('div');
-                card.className = 'template-card';
-                card.onclick = () => startDrawingApp(index);
-
-                const thumbCanvas = document.createElement('canvas');
-                thumbCanvas.width = 150;
-                thumbCanvas.height = 100;
-                drawTemplateThumbnail(thumbCanvas, index);
-
-                const label = document.createElement('span');
-                label.innerText = `${index + 1}. ${name}`;
-
-                card.appendChild(thumbCanvas);
-                card.appendChild(label);
-                grid.appendChild(card);
-            });
-        }
-
-        function drawTemplateThumbnail(canvas, index) {
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = "#2d3436";
-            ctx.lineWidth = 3;
-            ctx.fillStyle = "#dfe4ea";
-
-            ctx.save();
-            ctx.scale(0.5, 0.5);
-            ctx.translate(75, 50);
-            
-            // Basit çizim simülasyonları
-            ctx.beginPath();
-            ctx.arc(0, 0, 40, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.fill();
-
-            ctx.restore();
         }
 
         // --- ÇİZİM VE BOYAMA MOTORU ---
@@ -466,44 +450,16 @@
             });
         }
 
-        function startDrawingApp(templateIndex) {
+        function startDrawingApp() {
             openScreen('app-screen');
             resizeCanvas();
             clearCanvas();
-            
-            if(templateIndex !== null) {
-                document.getElementById('canvas-title').innerText = `Boyama: ${templateCategories[templateIndex]}`;
-                drawTemplateOnMainCanvas(templateIndex);
-            } else {
-                document.getElementById('canvas-title').innerText = "Kendin Çiz";
-            }
         }
 
         function resizeCanvas() {
             const wrapper = document.getElementById('canvas-wrapper');
             canvas.width = wrapper.clientWidth;
             canvas.height = wrapper.clientHeight;
-        }
-
-        function drawTemplateOnMainCanvas(index) {
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Şablon Çizgileri
-            ctx.strokeStyle = "#2d3436";
-            ctx.lineWidth = 4;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-
-            ctx.save();
-            ctx.translate(canvas.width / 2, canvas.height / 2);
-            
-            // Örnek şablon şekli çizimi
-            ctx.beginPath();
-            ctx.arc(0, 0, Math.min(canvas.width, canvas.height) * 0.3, 0, Math.PI * 2);
-            ctx.stroke();
-
-            ctx.restore();
         }
 
         function setTool(tool) {
