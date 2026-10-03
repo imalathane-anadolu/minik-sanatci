@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minik Sanatçı - Çocuk Boyama ve Aktivite Dünyası</title>
+    <!-- Konfeti Efekti İçin Kütüphane -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #fdfbf7; color: #333; text-align: center; padding: 10px; }
@@ -17,23 +19,36 @@
         .section { background: white; padding: 15px 10px; border-radius: 20px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .section h2 { color: #333; font-size: 18px; margin-bottom: 8px; }
 
-        /* Tuval Alanı Genişletildi */
-        input[type="text"] { padding: 10px; font-size: 16px; border: 2px solid #ffcc80; border-radius: 12px; width: 90%; max-width: 340px; margin-bottom: 10px; text-align: center; font-weight: bold; color: #ff5722; background: #fffdf9; }
+        /* Kategori / Şablon Seçim Butonları */
+        .template-group { display: flex; justify-content: center; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+        .tpl-btn { background: #ab47bc; color: white; border: none; padding: 6px 12px; font-size: 12px; font-weight: bold; border-radius: 15px; cursor: pointer; }
+        .tpl-btn.active { background: #7b1fa2; transform: scale(1.05); }
+
+        /* Renk Paleti */
         .palette { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-        .color-box { width: 38px; height: 38px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .color-box { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .color-box.active { border: 3px solid #333; transform: scale(1.15); }
-        
-        /* Tuval (Genişliği artırıldı) */
+
+        /* Araçlar */
+        .tools { margin: 8px 0; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+        .tool-btn { background: #ff9800; color: white; border: none; padding: 7px 12px; font-size: 12px; font-weight: bold; border-radius: 20px; cursor: pointer; }
+        .tool-btn.eraser { background: #78909c; }
+        .tool-btn.bucket { background: #00acc1; }
+        .tool-btn.clear { background: #e53935; }
+
+        /* Çıkartma Paleti */
+        .sticker-palette { display: flex; justify-content: center; gap: 8px; margin: 8px 0; font-size: 22px; cursor: pointer; }
+        .sticker-item { background: #f1f1f1; padding: 4px 8px; border-radius: 10px; transition: 0.2s; }
+        .sticker-item:hover { transform: scale(1.2); background: #ffe0b2; }
+
+        /* Tuval Alanı */
         canvas { background: #fff; border: 3px dashed #ffb74d; border-radius: 15px; width: 100%; max-width: 360px; height: 280px; touch-action: none; cursor: crosshair; display: block; margin: 0 auto; }
         
-        .tools { margin: 8px 0; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        .tool-btn { background: #ff9800; color: white; border: none; padding: 8px 14px; font-size: 13px; font-weight: bold; border-radius: 20px; cursor: pointer; }
-        .tool-btn.eraser { background: #78909c; }
-        .tool-btn.clear { background: #e53935; }
-        
-        .name-output { font-size: 20px; font-weight: bold; letter-spacing: 2px; color: #ff5722; margin: 8px 0; text-transform: uppercase; }
+        /* İsim Alanı */
+        input[type="text"] { padding: 10px; font-size: 15px; border: 2px solid #ffcc80; border-radius: 15px; width: 90%; max-width: 340px; margin: 8px 0; text-align: center; font-weight: bold; color: #ff5722; background: #fffdf9; }
+        .name-output { font-size: 20px; font-weight: bold; letter-spacing: 2px; color: #ff5722; margin: 6px 0; text-transform: uppercase; }
 
-        /* Butonlar */
+        /* Genel Butonlar */
         .btn { background: #2196f3; color: white; border: none; padding: 12px 20px; font-size: 15px; font-weight: bold; border-radius: 30px; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 4px 10px rgba(33,150,243,0.3); transition: 0.2s; margin: 6px 4px; width: 90%; max-width: 320px; text-align: center; }
         .btn:hover { transform: scale(1.02); }
         .btn.boyama1 { background: #4caf50; }
@@ -48,15 +63,21 @@
     <!-- ÜST BİLGİ -->
     <header>
         <h1>🎨 Minik Sanatçı Boyama Dünyası</h1>
-        <p>Dijital Tuvalde Boya & Boyama Kitaplarını İndir!</p>
+        <p>Dijital Tuval, Çıkartmalar ve Boyama Kitapları!</p>
     </header>
 
     <!-- DİJİTAL BOYAMA TUVALİ -->
     <div class="section">
-        <h2>✨ Parmakla Boyama Tuvali</h2>
+        <h2>✨ Akıllı Boyama Tuvali</h2>
         
-        <input type="text" id="childName" placeholder="Sanatçının Adını Yaz (Örn: HASAN)" oninput="updateName()">
-        
+        <!-- Şablon Seçimi -->
+        <div class="template-group">
+            <button class="tpl-btn active" onclick="setTemplate('house', this)">🏠 Ev</button>
+            <button class="tpl-btn" onclick="setTemplate('cat', this)">🐱 Kedi</button>
+            <button class="tpl-btn" onclick="setTemplate('rocket', this)">🚀 Roket</button>
+        </div>
+
+        <!-- Renkler -->
         <div class="palette">
             <div class="color-box active" style="background: #ff5722;" onclick="selectColor('#ff5722', this)"></div>
             <div class="color-box" style="background: #4caf50;" onclick="selectColor('#4caf50', this)"></div>
@@ -66,16 +87,29 @@
             <div class="color-box" style="background: #e91e63;" onclick="selectColor('#e91e63', this)"></div>
         </div>
 
+        <!-- Araçlar -->
         <div class="tools">
+            <button class="tool-btn bucket" onclick="enableBucket()">🪣 Dolgu</button>
             <button class="tool-btn eraser" onclick="enableEraser(this)">🧽 Silgi</button>
-            <button class="tool-btn clear" onclick="clearCanvas()">🗑️ Temizle</button>
+            <button class="tool-btn clear" onclick="clearCanvas()">🗑️️ Temizle</button>
         </div>
 
-        <!-- Tuval Boyutları Genişletildi -->
-        <canvas id="paintCanvas" width="360" height="280"></canvas>
+        <!-- Çıkartma Ekleme Paleti -->
+        <div class="sticker-palette">
+            <span class="sticker-item" onclick="addSticker('⭐')">⭐</span>
+            <span class="sticker-item" onclick="addSticker('❤️')">❤️️</span>
+            <span class="sticker-item" onclick="addSticker('🌸')">🌸</span>
+            <span class="sticker-item" onclick="addSticker('🚗')">🚗</span>
+            <span class="sticker-item" onclick="addSticker('🎈')">🎈</span>
+        </div>
+
+        <!-- Tuval -->
+        <canvas id="paintCanvas" width="360" height="260"></canvas>
+        
+        <input type="text" id="childName" placeholder="Sanatçının Adını Yaz (Örn: ZEYNEP)" oninput="updateName()">
         <div id="displayName" class="name-output">SANATÇI</div>
         
-        <button class="btn indir" onclick="downloadImage()">📸 Boyadığımı İndir</button>
+        <button class="btn indir" onclick="downloadImage()">📸 Boyadığımı İndir & Kutla 🎉</button>
     </div>
 
     <!-- BOYAMA KİTAPLARI İNDİRME ALANI -->
@@ -95,9 +129,29 @@
         let painting = false;
         let currentColor = '#ff5722';
         let currentLineWidth = 12;
+        let currentTemplate = 'house';
+        let isBucketMode = false;
+        let activeStickers = [];
 
-        // Pano açıldığında içine sevimli bir çizim (Ev ve Güneş) koyuyoruz
-        function initCanvas() {
+        // Ses Efekti (Web Audio API ile zarif bir bip sesi)
+        function playPopSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } catch(e) {}
+        }
+
+        function drawTemplate() {
             ctx.fillStyle = '#fff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
@@ -106,57 +160,86 @@
             ctx.strokeStyle = '#ccc';
             ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
 
-            // Sevimli Çizim Başlangıcı (Örn: Basit bir ev ve güneş figürü)
             ctx.lineWidth = 3;
             ctx.strokeStyle = '#444';
 
-            // Güneş
-            ctx.beginPath();
-            ctx.arc(60, 60, 25, 0, Math.PI * 2);
-            ctx.fillStyle = '#fff9c4';
-            ctx.fill();
-            ctx.stroke();
+            if (currentTemplate === 'house') {
+                // Güneş
+                ctx.beginPath();
+                ctx.arc(60, 55, 22, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff9c4'; ctx.fill(); ctx.stroke();
+                // Ev
+                ctx.strokeRect(130, 120, 100, 100);
+                ctx.beginPath(); ctx.moveTo(115, 120); ctx.lineTo(180, 65); ctx.lineTo(245, 120); ctx.closePath(); ctx.stroke();
+                ctx.strokeRect(165, 165, 30, 55);
+            } else if (currentTemplate === 'cat') {
+                // Kedi kafası
+                ctx.beginPath(); ctx.arc(180, 150, 60, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.stroke();
+                // Kulaklar
+                ctx.beginPath(); ctx.moveTo(135, 110); ctx.lineTo(130, 60); ctx.lineTo(165, 95); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(225, 110); ctx.lineTo(230, 60); ctx.lineTo(195, 95); ctx.closePath(); ctx.stroke();
+                // Bıyıklar
+                ctx.beginPath(); ctx.moveTo(130, 160); ctx.lineTo(100, 155); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(130, 175); ctx.lineTo(100, 180); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(230, 160); ctx.lineTo(260, 155); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(230, 175); ctx.lineTo(260, 180); ctx.stroke();
+            } else if (currentTemplate === 'rocket') {
+                // Roket Gövdesi
+                ctx.beginPath(); ctx.arc(180, 120, 35, Math.PI, 0, false); ctx.lineTo(215, 190); ctx.lineTo(145, 190); ctx.closePath(); ctx.stroke();
+                // Kanatlar
+                ctx.beginPath(); ctx.moveTo(145, 160); ctx.lineTo(120, 190); ctx.lineTo(145, 190); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(215, 160); ctx.lineTo(240, 190); ctx.lineTo(215, 190); ctx.closePath(); ctx.stroke();
+                // Pencere
+                ctx.beginPath(); ctx.arc(180, 115, 12, 0, Math.PI * 2); ctx.stroke();
+            }
 
-            // Evin gövdesi
-            ctx.strokeRect(130, 130, 100, 100);
-
-            // Evin çatısı
-            ctx.beginPath();
-            ctx.moveTo(115, 130);
-            ctx.lineTo(180, 70);
-            ctx.lineTo(245, 130);
-            ctx.closePath();
-            ctx.stroke();
-
-            // Kapı
-            ctx.strokeRect(165, 175, 30, 55);
-
-            // İpucu Yazısı
-            ctx.font = "14px Arial";
-            ctx.fillStyle = "#aaa";
-            ctx.fillText("Burayı rengarenk boya! 🎨", 105, 260);
+            // Eklenmiş Çıkartmaları Çiz
+            activeStickers.forEach(s => {
+                ctx.font = "28px Arial";
+                ctx.fillText(s.emoji, s.x, s.y);
+            });
         }
-        initCanvas();
+        drawTemplate();
+
+        function setTemplate(tpl, btn) {
+            currentTemplate = tpl;
+            activeStickers = [];
+            isBucketMode = false;
+            document.querySelectorAll('.tpl-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            drawTemplate();
+            playPopSound();
+        }
+
+        function addSticker(emoji) {
+            activeStickers.push({ emoji: emoji, x: 150 + Math.random() * 40, y: 150 + Math.random() * 40 });
+            drawTemplate();
+            playPopSound();
+        }
 
         function getMousePos(e) {
             const rect = canvas.getBoundingClientRect();
-            let clientX = e.clientX;
-            let clientY = e.clientY;
-
+            let clientX = e.clientX, clientY = e.clientY;
             if (e.touches && e.touches[0]) {
                 clientX = e.touches[0].clientX;
                 clientY = e.touches[0].clientY;
             }
-
-            return {
-                x: clientX - rect.left,
-                y: clientY - rect.top
-            };
+            return { x: clientX - rect.left, y: clientY - rect.top };
         }
 
-        function startPosition(e) {
-            painting = true;
+        function startAction(e) {
             const pos = getMousePos(e);
+            if (isBucketMode) {
+                // Dolgu (Kova) Efekti: Tuvalin zemin rengini seçilen renge boyar
+                ctx.fillStyle = currentColor;
+                ctx.fillRect(12, 12, canvas.width - 24, canvas.height - 24);
+                drawTemplate();
+                isBucketMode = false;
+                playPopSound();
+                return;
+            }
+
+            painting = true;
             ctx.beginPath();
             ctx.moveTo(pos.x, pos.y);
             e.preventDefault();
@@ -168,9 +251,8 @@
         }
 
         function draw(e) {
-            if (!painting) return;
+            if (!painting || isBucketMode) return;
             e.preventDefault();
-            
             const pos = getMousePos(e);
 
             ctx.lineWidth = currentLineWidth;
@@ -184,29 +266,41 @@
             ctx.moveTo(pos.x, pos.y);
         }
 
-        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mousedown', startAction);
         canvas.addEventListener('mouseup', endPosition);
         canvas.addEventListener('mousemove', draw);
 
-        canvas.addEventListener('touchstart', startPosition, { passive: false });
+        canvas.addEventListener('touchstart', startAction, { passive: false });
         canvas.addEventListener('touchend', endPosition);
         canvas.addEventListener('touchmove', draw, { passive: false });
 
         function selectColor(color, element) {
             currentColor = color;
             currentLineWidth = 12;
+            isBucketMode = false;
             document.querySelectorAll('.color-box').forEach(b => b.classList.remove('active'));
             if(element) element.classList.add('active');
+            playPopSound();
         }
 
         function enableEraser(element) {
             currentColor = '#ffffff';
             currentLineWidth = 25;
+            isBucketMode = false;
             document.querySelectorAll('.color-box').forEach(b => b.classList.remove('active'));
+            playPopSound();
+        }
+
+        function enableBucket() {
+            isBucketMode = true;
+            playPopSound();
         }
 
         function clearCanvas() {
-            initCanvas();
+            activeStickers = [];
+            isBucketMode = false;
+            drawTemplate();
+            playPopSound();
         }
 
         function updateName() {
@@ -215,6 +309,13 @@
         }
 
         function downloadImage() {
+            // Konfeti Kutlaması Patlat
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+
             const link = document.createElement('a');
             link.download = 'minik-sanatci-boyama.png';
             link.href = canvas.toDataURL('image/png');
