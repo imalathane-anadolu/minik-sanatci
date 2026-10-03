@@ -15,8 +15,9 @@
         #appContainer:fullscreen { width: 100vw; height: 100vh; max-width: none; background: #121214; padding: 20px; border-radius: 0; border: none; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 24px; }
         #appContainer:-webkit-full-screen { width: 100vw; height: 100vh; max-width: none; background: #121214; padding: 20px; border-radius: 0; border: none; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 24px; }
 
-        header { background: linear-gradient(135deg, #7c3aed, #db2777); padding: 12px; border-radius: 16px; width: 100%; box-shadow: 0 4px 12px rgba(124,58,237,0.3); }
-        h1 { color: #fff; font-size: 20px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 2px; }
+        header { background: linear-gradient(135deg, #7c3aed, #db2777); padding: 12px; border-radius: 16px; width: 100%; box-shadow: 0 4px 12px rgba(124,58,237,0.3); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .header-title-area { text-align: left; }
+        h1 { color: #fff; font-size: 18px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 2px; }
         p { color: #f3e8ff; font-size: 11px; font-weight: 500; opacity: 0.9; }
 
         .section { background: #29292e; padding: 12px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 100%; border: 1px solid #323238; }
@@ -58,7 +59,7 @@
         .tool-btn.eraser { background: #c53030; border-color: #e53e3e; color: #fff; }
         .tool-btn.undo-redo { background: #57534e; }
         .tool-btn.stamp { background: #db2777; border-color: #f472b6; color: #fff; }
-        .tool-btn.fullscreen { background: #4f46e5; border-color: #6366f1; color: #fff; }
+        .tool-btn.fullscreen { background: #4f46e5; border-color: #6366f1; color: #fff; font-size: 11px; padding: 6px 10px; flex: unset; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
         .tool-btn.clear { background: #7f1d1d; border-color: #991b1b; color: #fff; }
 
         .canvas-container { position: relative; display: flex; justify-content: center; width: 100%; border-radius: 16px; overflow: hidden; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
@@ -90,8 +91,11 @@
 
         <div class="right-canvas-panel">
             <header style="margin-bottom: 8px;">
-                <h1>🎨 Kendin Çiz & Boya</h1>
-                <p>50 Farklı Eğlenceli Şablon Arşivi</p>
+                <div class="header-title-area">
+                    <h1>🎨 Kendin Çiz & Boya</h1>
+                    <p>50 Farklı Eğlenceli Şablon Arşivi</p>
+                </div>
+                <button class="tool-btn fullscreen" onclick="toggleFullScreen()">⛶ Tam Ekran</button>
             </header>
             <div class="canvas-container" id="canvasContainer">
                 <canvas id="paintCanvas" width="460" height="310"></canvas>
@@ -136,7 +140,6 @@
                 </div>
 
                 <div class="tools">
-                    <button class="tool-btn fullscreen" onclick="toggleFullScreen()">⛶ Tam Ekran Stüdyo</button>
                     <button class="tool-btn clear" onclick="clearCanvas()">🗑️ Sıfırla</button>
                 </div>
 
@@ -187,17 +190,17 @@
             { id: 37, name: "🐝 Çalışkan Arı", type: "bee" },
             { id: 38, name: "🧁 Cupcake", type: "cupcake" },
             { id: 39, name: "🚲 Çocuk Bisikleti", type: "bicycle" },
-            { id: 40, name: "Cactus Sevimli Kaktüs", type: "cactus" },
+            { id: 40, name: "🌵 Sevimli Kaktüs", type: "cactus" },
             { id: 41, name: "🐧 Sevimli Penguen", type: "penguin" },
-            { id: 42, name: "Lolipop", type: "lollipop" },
-            { id: 43, name: "Kardan Adam", type: "snowman" },
-            { id: 44, name: "Kuğular", type: "swan" },
-            { id: 45, name: "Palyaço", type: "clown" },
-            { id: 46, name: "Zürafa", type: "giraffe" },
-            { id: 47, name: "Deniz Yıldızı", type: "starfish" },
-            { id: 48, name: "Müzik Notası", type: "music" },
-            { id: 49, name: "Uçurtma", type: "kite" },
-            { id: 50, name: "Mutlu Bulut", type: "cloud" }
+            { id: 42, name: "🍭 Lolipop", type: "lollipop" },
+            { id: 43, name: "⛄ Kardan Adam", type: "snowman" },
+            { id: 44, name: "🦢 Zarif Kuğu", type: "swan" },
+            { id: 45, name: "🤡 Neşeli Palyaço", type: "clown" },
+            { id: 46, name: "🦒 Uzun Zürafa", type: "giraffe" },
+            { id: 47, name: "⭐ Deniz Yıldızı", type: "starfish" },
+            { id: 48, name: "🎵 Müzik Notası", type: "music" },
+            { id: 49, name: "🪁 Uçurtma", type: "kite" },
+            { id: 50, name: "☁️ Mutlu Bulut", type: "cloud" }
         ];
 
         const templateListEl = document.getElementById('templateList');
@@ -230,13 +233,11 @@
         let historySteps = [];
         let historyStepIndex = -1;
 
-        // Boyama Katmanı (Çocuğun boyaları ve çizgileri)
         let userCanvas = document.createElement('canvas');
         userCanvas.width = 460;
         userCanvas.height = 310;
         let userCtx = userCanvas.getContext('2d');
 
-        // Sabit Şablon Katmanı (Silginin asla silemediği ana hatlar)
         let templateCanvas = document.createElement('canvas');
         templateCanvas.width = 460;
         templateCanvas.height = 310;
@@ -264,7 +265,7 @@
             userCtx.fillRect(0, 0, userCanvas.width, userCanvas.height);
         }
 
-        // Şablon Çizgilerini Sadece Sabit Katmana Çiziyoruz
+        // Tüm 50 Şablonun Çizim Fonksiyonları (Eksiksiz)
         function buildTemplateLayer() {
             templateCtx.clearRect(0, 0, templateCanvas.width, templateCanvas.height);
             templateCtx.lineWidth = 3;
@@ -272,34 +273,305 @@
             templateCtx.lineCap = 'round';
             templateCtx.lineJoin = 'round';
 
-            // Dış Çerçeve
             templateCtx.strokeRect(10, 10, templateCanvas.width - 20, templateCanvas.height - 20);
 
-            if (currentTemplate === 'house') {
-                templateCtx.beginPath(); templateCtx.arc(75, 45, 18, 0, Math.PI * 2); templateCtx.fillStyle = '#fef08a'; templateCtx.fill(); templateCtx.stroke();
-                templateCtx.strokeRect(150, 110, 160, 115);
-                templateCtx.beginPath(); templateCtx.moveTo(125, 110); templateCtx.lineTo(230, 40); templateCtx.lineTo(335, 110); templateCtx.closePath(); templateCtx.stroke();
-                templateCtx.strokeRect(205, 160, 50, 65);
-                templateCtx.strokeRect(170, 130, 30, 30);
-                templateCtx.strokeRect(260, 130, 30, 30);
-            } else if (currentTemplate === 'cat') {
-                templateCtx.beginPath(); templateCtx.arc(230, 140, 65, 0, Math.PI * 2); templateCtx.fillStyle = '#fff'; templateCtx.fill(); templateCtx.stroke();
-                templateCtx.beginPath(); templateCtx.moveTo(180, 95); templateCtx.lineTo(170, 40); templateCtx.lineTo(215, 85); templateCtx.closePath(); templateCtx.stroke();
-                templateCtx.beginPath(); templateCtx.moveTo(280, 95); templateCtx.lineTo(290, 40); templateCtx.lineTo(245, 85); templateCtx.closePath(); templateCtx.stroke();
-                templateCtx.beginPath(); templateCtx.arc(205, 125, 7, 0, Math.PI * 2); templateCtx.fillStyle = '#18181b'; templateCtx.fill();
-                templateCtx.beginPath(); templateCtx.arc(255, 125, 7, 0, Math.PI * 2); templateCtx.fill();
-                templateCtx.beginPath(); templateCtx.arc(230, 145, 5, 0, Math.PI * 2); templateCtx.fill();
-            } else if (currentTemplate === 'rocket') {
-                templateCtx.beginPath(); templateCtx.arc(230, 100, 38, Math.PI, 0, false); templateCtx.lineTo(268, 180); templateCtx.lineTo(192, 180); templateCtx.closePath(); templateCtx.stroke();
-                templateCtx.beginPath(); templateCtx.moveTo(192, 145); templateCtx.lineTo(160, 180); templateCtx.lineTo(192, 180); templateCtx.closePath(); templateCtx.stroke();
-                templateCtx.beginPath(); templateCtx.moveTo(268, 145); templateCtx.lineTo(300, 180); templateCtx.lineTo(268, 180); templateCtx.closePath(); templateCtx.stroke();
-                templateCtx.beginPath(); templateCtx.arc(230, 95, 12, 0, Math.PI * 2); templateCtx.stroke();
-                templateCtx.beginPath(); templateCtx.moveTo(212, 180); templateCtx.lineTo(230, 220); templateCtx.lineTo(248, 180); templateCtx.closePath(); templateCtx.stroke();
-            } else {
-                templateCtx.beginPath(); templateCtx.arc(230, 140, 75, 0, Math.PI * 2); templateCtx.stroke();
-                templateCtx.beginPath(); templateCtx.arc(205, 125, 10, 0, Math.PI * 2); templateCtx.stroke();
-                templateCtx.beginPath(); templateCtx.arc(255, 125, 10, 0, Math.PI * 2); templateCtx.stroke();
-                templateCtx.beginPath(); templateCtx.arc(230, 160, 20, 0, Math.PI); templateCtx.stroke();
+            switch(currentTemplate) {
+                case 'house':
+                    templateCtx.beginPath(); templateCtx.arc(75, 45, 18, 0, Math.PI * 2); templateCtx.fillStyle = '#fef08a'; templateCtx.fill(); templateCtx.stroke();
+                    templateCtx.strokeRect(150, 110, 160, 115);
+                    templateCtx.beginPath(); templateCtx.moveTo(125, 110); templateCtx.lineTo(230, 40); templateCtx.lineTo(335, 110); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.strokeRect(205, 160, 50, 65);
+                    templateCtx.strokeRect(170, 130, 30, 30);
+                    templateCtx.strokeRect(260, 130, 30, 30);
+                    break;
+                case 'cat':
+                    templateCtx.beginPath(); templateCtx.arc(230, 140, 65, 0, Math.PI * 2); templateCtx.fillStyle = '#fff'; templateCtx.fill(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(180, 95); templateCtx.lineTo(170, 40); templateCtx.lineTo(215, 85); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(280, 95); templateCtx.lineTo(290, 40); templateCtx.lineTo(245, 85); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(205, 125, 7, 0, Math.PI * 2); templateCtx.fillStyle = '#18181b'; templateCtx.fill();
+                    templateCtx.beginPath(); templateCtx.arc(255, 125, 7, 0, Math.PI * 2); templateCtx.fill();
+                    templateCtx.beginPath(); templateCtx.arc(230, 145, 5, 0, Math.PI * 2); templateCtx.fill();
+                    break;
+                case 'rocket':
+                    templateCtx.beginPath(); templateCtx.arc(230, 100, 38, Math.PI, 0, false); templateCtx.lineTo(268, 180); templateCtx.lineTo(192, 180); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(192, 145); templateCtx.lineTo(160, 180); templateCtx.lineTo(192, 180); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(268, 145); templateCtx.lineTo(300, 180); templateCtx.lineTo(268, 180); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(230, 95, 12, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(212, 180); templateCtx.lineTo(230, 220); templateCtx.lineTo(248, 180); templateCtx.closePath(); templateCtx.stroke();
+                    break;
+                case 'car':
+                    templateCtx.strokeRect(150, 140, 160, 50);
+                    templateCtx.beginPath(); templateCtx.moveTo(180, 140); templateCtx.lineTo(200, 100); templateCtx.lineTo(260, 100); templateCtx.lineTo(280, 140); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(185, 190, 22, 0, Math.PI * 2); templateCtx.fillStyle = '#fff'; templateCtx.fill(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(275, 190, 22, 0, Math.PI * 2); templateCtx.fillStyle = '#fff'; templateCtx.fill(); templateCtx.stroke();
+                    break;
+                case 'bear':
+                    templateCtx.beginPath(); templateCtx.arc(230, 150, 55, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(185, 105, 18, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(275, 105, 18, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(210, 140, 6, 0, Math.PI * 2); templateCtx.fillStyle = '#18181b'; templateCtx.fill();
+                    templateCtx.beginPath(); templateCtx.arc(250, 140, 6, 0, Math.PI * 2); templateCtx.fill();
+                    templateCtx.beginPath(); templateCtx.arc(230, 165, 12, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
+                case 'tree':
+                    templateCtx.beginPath(); templateCtx.rect(215, 170, 30, 60); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(230, 130, 50, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
+                case 'sun':
+                    templateCtx.beginPath(); templateCtx.arc(230, 140, 45, 0, Math.PI * 2); templateCtx.fillStyle = '#fef08a'; templateCtx.fill(); templateCtx.stroke();
+                    for(let i=0; i<8; i++) {
+                        let angle = (i * Math.PI) / 4;
+                        let x1 = 230 + Math.cos(angle) * 55;
+                        let y1 = 140 + Math.sin(angle) * 55;
+                        let x2 = 230 + Math.cos(angle) * 70;
+                        let y2 = 140 + Math.sin(angle) * 70;
+                        templateCtx.beginPath(); templateCtx.moveTo(x1, y1); templateCtx.lineTo(x2, y2); templateCtx.stroke();
+                    }
+                    break;
+                case 'boat':
+                    templateCtx.beginPath(); templateCtx.moveTo(160, 190); templateCtx.lineTo(300, 190); templateCtx.lineTo(270, 230); templateCtx.lineTo(190, 230); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(230, 180); templateCtx.lineTo(230, 90); templateCtx.lineTo(280, 150); templateCtx.closePath(); templateCtx.stroke();
+                    break;
+                case 'star':
+                    templateCtx.beginPath();
+                    let cx = 230, cy = 140, outerRadius = 50, innerRadius = 25;
+                    for (let i = 0; i < 10; i++) {
+                        let r = (i % 2 === 0) ? outerRadius : innerRadius;
+                        let angle = (i * Math.PI) / 5 - Math.PI / 2;
+                        let x = cx + Math.cos(angle) * r;
+                        let y = cy + Math.sin(angle) * r;
+                        if (i === 0) templateCtx.moveTo(x, y); else templateCtx.lineTo(x, y);
+                    }
+                    templateCtx.closePath(); templateCtx.stroke();
+                    break;
+                case 'butterfly':
+                    templateCtx.beginPath(); templateCtx.ellipse(230, 140, 10, 45, 0, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.ellipse(190, 110, 30, 20, Math.PI/4, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.ellipse(270, 110, 30, 20, -Math.PI/4, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.ellipse(190, 170, 25, 20, -Math.PI/4, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.ellipse(270, 170, 25, 20, Math.PI/4, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
+                case 'mushroom':
+                    templateCtx.beginPath(); templateCtx.arc(230, 120, 55, Math.PI, 0, false); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.strokeRect(210, 120, 40, 85);
+                    break;
+                case 'icecream':
+                    templateCtx.beginPath(); templateCtx.moveTo(200, 150); templateCtx.lineTo(260, 150); templateCtx.lineTo(230, 230); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(230, 130, 35, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(230, 95, 22, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
+                case 'ball':
+                    templateCtx.beginPath(); templateCtx.arc(230, 140, 55, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(230, 140, 18, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(230, 85); templateCtx.lineTo(230, 122); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(230, 158); templateCtx.lineTo(230, 195); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(175, 140); templateCtx.lineTo(212, 140); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(248, 140); templateCtx.lineTo(285, 140); templateCtx.stroke();
+                    break;
+                case 'fish':
+                    templateCtx.beginPath(); templateCtx.ellipse(220, 140, 55, 35, 0, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(270, 140); templateCtx.lineTo(310, 110); templateCtx.lineTo(310, 170); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(190, 130, 6, 0, Math.PI * 2); templateCtx.fillStyle = '#18181b'; templateCtx.fill();
+                    break;
+                case 'dino':
+                    templateCtx.beginPath(); templateCtx.ellipse(230, 150, 50, 30, 0, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(275, 120, 20, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(200, 180); templateCtx.lineTo(195, 220); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(260, 180); templateCtx.lineTo(265, 220); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(180, 150); templateCtx.lineTo(140, 180); templateCtx.stroke();
+                    break;
+                case 'flower':
+                    templateCtx.beginPath(); templateCtx.arc(230, 120, 22, 0, Math.PI * 2); templateCtx.fillStyle = '#fef08a'; templateCtx.fill(); templateCtx.stroke();
+                    for(let i=0; i<6; i++) {
+                        let angle = (i * Math.PI) / 3;
+                        let fx = 230 + Math.cos(angle) * 30;
+                        let fy = 120 + Math.sin(angle) * 30;
+                        templateCtx.beginPath(); templateCtx.arc(fx, fy, 20, 0, Math.PI * 2); templateCtx.stroke();
+                    }
+                    templateCtx.beginPath(); templateCtx.moveTo(230, 142); templateCtx.lineTo(230, 230); templateCtx.stroke();
+                    break;
+                case 'castle':
+                    templateCtx.strokeRect(180, 110, 100, 110);
+                    templateCtx.strokeRect(155, 90, 35, 130);
+                    templateCtx.strokeRect(270, 90, 35, 130);
+                    templateCtx.beginPath(); templateCtx.moveTo(155, 90); templateCtx.lineTo(172, 50); templateCtx.lineTo(190, 90); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(270, 90); templateCtx.lineTo(287, 50); templateCtx.lineTo(305, 90); templateCtx.closePath(); templateCtx.stroke();
+                    break;
+                case 'balloon':
+                    for(let bx of [190, 230, 270]) {
+                        templateCtx.beginPath(); templateCtx.arc(bx, 110, 25, 0, Math.PI * 2); templateCtx.stroke();
+                        templateCtx.beginPath(); templateCtx.moveTo(bx, 135); templateCtx.lineTo(230, 230); templateCtx.stroke();
+                    }
+                    break;
+                case 'owl':
+                    templateCtx.beginPath(); templateCtx.arc(230, 140, 50, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(210, 130, 15, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(250, 130, 15, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(210, 130, 5, 0, Math.PI * 2); templateCtx.fillStyle='#18181b'; templateCtx.fill();
+                    templateCtx.beginPath(); templateCtx.arc(250, 130, 5, 0, Math.PI * 2); templateCtx.fillStyle='#18181b'; templateCtx.fill();
+                    break;
+                case 'apple':
+                    templateCtx.beginPath(); templateCtx.arc(230, 145, 45, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(230, 100); templateCtx.quadraticCurveTo(250, 75, 230, 60); templateCtx.stroke();
+                    break;
+                case 'train':
+                    templateCtx.strokeRect(160, 130, 80, 70);
+                    templateCtx.strokeRect(250, 150, 50, 50);
+                    templateCtx.beginPath(); templateCtx.arc(180, 200, 18, 0, Math.PI * 2); templateCtx.fillStyle='#fff'; templateCtx.fill(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(220, 200, 18, 0, Math.PI * 2); templateCtx.fillStyle='#fff'; templateCtx.fill(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(275, 200, 18, 0, Math.PI * 2); templateCtx.fillStyle='#fff'; templateCtx.fill(); templateCtx.stroke();
+                    break;
+                case 'robot':
+                    templateCtx.strokeRect(205, 95, 50, 40);
+                    templateCtx.strokeRect(190, 140, 80, 85);
+                    templateCtx.beginPath(); templateCtx.arc(230, 95, 5, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
+                case 'panda':
+                    templateCtx.beginPath(); templateCtx.arc(230, 140, 55, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(185, 100, 16, 0, Math.PI * 2); templateCtx.fillStyle='#18181b'; templateCtx.fill(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(275, 100, 16, 0, Math.PI * 2); templateCtx.fillStyle='#18181b'; templateCtx.fill(); templateCtx.stroke();
+                    break;
+                case 'sunflower':
+                    templateCtx.beginPath(); templateCtx.arc(230, 135, 25, 0, Math.PI * 2); templateCtx.fillStyle='#a16207'; templateCtx.fill(); templateCtx.stroke();
+                    for(let i=0; i<10; i++) {
+                        let angle = (i * Math.PI) / 5;
+                        let sx = 230 + Math.cos(angle) * 38;
+                        let sy = 135 + Math.sin(angle) * 38;
+                        templateCtx.beginPath(); templateCtx.arc(sx, sy, 15, 0, Math.PI * 2); templateCtx.stroke();
+                    }
+                    templateCtx.beginPath(); templateCtx.moveTo(230, 160); templateCtx.lineTo(230, 230); templateCtx.stroke();
+                    break;
+                case 'donut':
+                    templateCtx.beginPath(); templateCtx.arc(230, 140, 55, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(230, 140, 20, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
+                case 'turtle':
+                    templateCtx.beginPath(); templateCtx.arc(230, 145, 48, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(230, 85, 20, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
+                case 'helicopter':
+                    templateCtx.strokeRect(190, 130, 80, 50);
+                    templateCtx.beginPath(); templateCtx.moveTo(150, 100); templateCtx.lineTo(310, 100); templateCtx.stroke();
+                    break;
+                case 'moon':
+                    templateCtx.beginPath(); templateCtx.arc(230, 140, 60, 0.5 * Math.PI, 1.5 * Math.PI, false);
+                    templateCtx.quadraticCurveTo(270, 140, 230, 200); templateCtx.stroke();
+                    break;
+                case 'lion':
+                    templateCtx.beginPath(); templateCtx.arc(230, 140, 55, 0, Math.PI * 2); templateCtx.stroke();
+                    for(let i=0; i<12; i++) {
+                        let angle = (i * Math.PI) / 6;
+                        let lx = 230 + Math.cos(angle) * 65;
+                        let ly = 140 + Math.sin(angle) * 65;
+                        templateCtx.beginPath(); templateCtx.arc(lx, ly, 14, 0, Math.PI * 2); templateCtx.stroke();
+                    }
+                    break;
+                case 'gift':
+                    templateCtx.strokeRect(180, 120, 100, 90);
+                    templateCtx.strokeRect(172, 105, 116, 20);
+                    templateCtx.beginPath(); templateCtx.moveTo(230, 120); templateCtx.lineTo(230, 210); templateCtx.stroke();
+                    break;
+                case 'frog':
+                    templateCtx.beginPath(); templateCtx.arc(230, 150, 55, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(200, 100, 16, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(260, 100, 16, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
+                case 'duck':
+                    templateCtx.beginPath(); templateCtx.arc(240, 150, 45, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(190, 115, 25, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
+                case 'watermelon':
+                    templateCtx.beginPath(); templateCtx.arc(230, 180, 75, Math.PI, 0, false); templateCtx.closePath(); templateCtx.stroke();
+                    break;
+                case 'ufo':
+                    templateCtx.beginPath(); templateCtx.ellipse(230, 150, 80, 25, 0, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(230, 135, 35, Math.PI, 0, false); templateCtx.stroke();
+                    break;
+                case 'fox':
+                    templateCtx.beginPath(); templateCtx.arc(230, 145, 50, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(185, 115); templateCtx.lineTo(155, 75); templateCtx.lineTo(200, 105); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(275, 115); templateCtx.lineTo(305, 75); templateCtx.lineTo(260, 105); templateCtx.closePath(); templateCtx.stroke();
+                    break;
+                case 'crown':
+                    templateCtx.beginPath(); templateCtx.moveTo(170, 180); templateCtx.lineTo(170, 120); templateCtx.lineTo(200, 150); templateCtx.lineTo(230, 100); templateCtx.lineTo(260, 150); templateCtx.lineTo(290, 120); templateCtx.lineTo(290, 180); templateCtx.closePath(); templateCtx.stroke();
+                    break;
+                case 'bee':
+                    templateCtx.beginPath(); templateCtx.ellipse(230, 145, 55, 38, 0, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(210, 107); templateCtx.lineTo(210, 183); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(250, 107); templateCtx.lineTo(250, 183); templateCtx.stroke();
+                    break;
+                case 'cupcake':
+                    templateCtx.beginPath(); templateCtx.moveTo(195, 160); templateCtx.lineTo(265, 160); templateCtx.lineTo(250, 220); templateCtx.lineTo(210, 220); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(230, 150, 35, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
+                case 'bicycle':
+                    templateCtx.beginPath(); templateCtx.arc(175, 180, 28, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(285, 180, 28, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(175, 180); templateCtx.lineTo(230, 140); templateCtx.lineTo(265, 180); templateCtx.stroke();
+                    break;
+                case 'cactus':
+                    templateCtx.strokeRect(215, 105, 30, 115);
+                    templateCtx.beginPath(); templateCtx.arc(230, 105, 20, Math.PI, 0, false); templateCtx.stroke();
+                    break;
+                case 'penguin':
+                    templateCtx.beginPath(); templateCtx.ellipse(230, 145, 45, 60, 0, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.ellipse(230, 150, 30, 45, 0, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
+                case 'lollipop':
+                    templateCtx.beginPath(); templateCtx.arc(230, 110, 40, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(230, 150); templateCtx.lineTo(230, 230); templateCtx.stroke();
+                    break;
+                case 'snowman':
+                    templateCtx.beginPath(); templateCtx.arc(230, 105, 22, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(230, 150, 32, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(230, 205, 42, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
+                case 'swan':
+                    templateCtx.beginPath(); templateCtx.ellipse(230, 160, 45, 28, 0, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(210, 140); templateCtx.quadraticCurveTo(180, 100, 210, 80); templateCtx.stroke();
+                    break;
+                case 'clown':
+                    templateCtx.beginPath(); templateCtx.arc(230, 140, 50, 0, Math.PI * 2); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(230, 145, 12, 0, Math.PI * 2); templateCtx.fillStyle='#ef4444'; templateCtx.fill(); templateCtx.stroke();
+                    break;
+                case 'giraffe':
+                    templateCtx.strokeRect(210, 140, 40, 80);
+                    templateCtx.strokeRect(215, 75, 25, 75);
+                    templateCtx.beginPath(); templateCtx.arc(225, 70, 18, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
+                case 'starfish':
+                    templateCtx.beginPath();
+                    for(let i=0; i<10; i++) {
+                        let r = (i % 2 === 0) ? 50 : 22;
+                        let angle = (i * Math.PI) / 5 - Math.PI / 2;
+                        let sx = 230 + Math.cos(angle) * r;
+                        let sy = 145 + Math.sin(angle) * r;
+                        if(i === 0) templateCtx.moveTo(sx, sy); else templateCtx.lineTo(sx, sy);
+                    }
+                    templateCtx.closePath(); templateCtx.stroke();
+                    break;
+                case 'music':
+                    templateCtx.beginPath(); templateCtx.arc(205, 180, 15, 0, Math.PI * 2); templateCtx.fillStyle='#18181b'; templateCtx.fill(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.rect(216, 110, 8, 70); templateCtx.fill(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.arc(255, 165, 15, 0, Math.PI * 2); templateCtx.fillStyle='#18181b'; templateCtx.fill(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.rect(266, 95, 8, 70); templateCtx.fill(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(224, 110); templateCtx.lineTo(274, 95); templateCtx.lineTo(274, 115); templateCtx.lineTo(224, 130); templateCtx.closePath(); templateCtx.fill(); templateCtx.stroke();
+                    break;
+                case 'kite':
+                    templateCtx.beginPath(); templateCtx.moveTo(230, 80); templateCtx.lineTo(280, 140); templateCtx.lineTo(230, 200); templateCtx.lineTo(180, 140); templateCtx.closePath(); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(230, 80); templateCtx.lineTo(230, 200); templateCtx.stroke();
+                    templateCtx.beginPath(); templateCtx.moveTo(180, 140); templateCtx.lineTo(280, 140); templateCtx.stroke();
+                    break;
+                case 'cloud':
+                    templateCtx.beginPath();
+                    templateCtx.arc(200, 150, 30, 0, Math.PI * 2);
+                    templateCtx.arc(235, 130, 40, 0, Math.PI * 2);
+                    templateCtx.arc(270, 150, 28, 0, Math.PI * 2);
+                    templateCtx.closePath(); templateCtx.stroke();
+                    break;
+                default:
+                    templateCtx.beginPath(); templateCtx.arc(230, 140, 75, 0, Math.PI * 2); templateCtx.stroke();
+                    break;
             }
         }
 
@@ -331,11 +603,10 @@
             }
         }
 
-        // Ekranda Önce Boyanan Alan, Üzerine de Silinmez Şablon Çizgileri Birleşir
         function redrawEverything() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(userCanvas, 0, 0);
-            ctx.drawImage(templateCanvas, 0, 0); // Şablon çizgileri her zaman en üstte ve silinmez kalır!
+            ctx.drawImage(templateCanvas, 0, 0);
 
             const nameInput = document.getElementById('childName').value.trim().toUpperCase();
             const displayName = nameInput !== "" ? nameInput : "PRO SANATÇI";
@@ -410,7 +681,6 @@
             const startG = pixels[startPos + 1];
             const startB = pixels[startPos + 2];
 
-            // Siyah ana şablon çizgilerinin içine boya dökülmesini engelle
             if (startR < 40 && startG < 40 && startB < 40) return;
 
             let tempC = document.createElement('canvas').getContext('2d');
@@ -464,11 +734,9 @@
         function pickColor(x, y) {
             redrawEverything();
             const pixel = ctx.getImageData(x, y, 1, 1).data;
-            
             const hex = "#" + ((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2]).toString(16).slice(1);
             currentColor = hex;
             document.getElementById('customColorPicker').value = hex;
-            
             document.querySelectorAll('.color-box').forEach(b => b.classList.remove('active'));
             setActiveTool('brush');
             playStudioSound();
@@ -486,7 +754,6 @@
 
         function startAction(e) {
             const pos = getMousePos(e);
-            
             if (activeTool === 'bucket') {
                 floodFill(pos.x, pos.y, currentColor);
                 playStudioSound();
@@ -498,7 +765,6 @@
                 placeStamp(pos.x, pos.y, currentStampChar);
                 return;
             }
-
             painting = true;
             userCtx.beginPath();
             userCtx.moveTo(pos.x, pos.y);
@@ -550,13 +816,12 @@
             activeTool = tool;
             document.getElementById('bucketBtn').classList.remove('active-bucket');
             document.getElementById('eyedropperBtn').classList.remove('active-eyedropper');
-            
             if (tool === 'bucket') document.getElementById('bucketBtn').classList.add('active-bucket');
             if (tool === 'eyedropper') document.getElementById('eyedropperBtn').classList.add('active-eyedropper');
         }
 
         function enableEraser() {
-            currentColor = '#ffffff'; // Silgi sadece boyama katmanını beyazlatır, şablonu asla etkilemez
+            currentColor = '#ffffff';
             currentLineWidth = 22;
             setActiveTool('brush');
             playStudioSound();
