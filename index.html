@@ -10,29 +10,65 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #fdfbf7; color: #333; text-align: center; padding: 10px; }
         
+        /* Tüm Uygulama Çerçevesi (Tam Ekran Modunda Bu Kapsayıcı Büyür) */
+        #appContainer { background: #fdfbf7; padding: 5px; width: 100%; max-width: 520px; margin: 0 auto; border-radius: 20px; transition: all 0.3s; }
+
+        /* Tam Ekran Olunca Tüm Ekranı Kaplar ve Yatay (Landscape) Düzen Oluşur */
+        #appContainer:fullscreen {
+            width: 100vw;
+            height: 100vh;
+            max-width: none;
+            background: #fdfbf7;
+            padding: 15px;
+            display: flex;
+            flex-direction: row; /* Yan yana yerleşim */
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            overflow: hidden;
+        }
+        #appContainer:-webkit-full-screen {
+            width: 100vw;
+            height: 100vh;
+            max-width: none;
+            background: #fdfbf7;
+            padding: 15px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            overflow: hidden;
+        }
+
         /* Başlık Alanı */
-        header { background: #ffdf6d; padding: 15px; border-radius: 20px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h1 { color: #ff5722; font-size: 22px; margin-bottom: 5px; }
-        p { color: #555; font-size: 13px; }
+        header { background: #ffdf6d; padding: 12px; border-radius: 15px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { color: #ff5722; font-size: 20px; margin-bottom: 3px; }
+        p { color: #555; font-size: 12px; }
+        #appContainer:fullscreen header { display: none; } /* Tam ekranda ana başlığı gizleyip alanı koruyoruz */
+
+        /* Sol Menü Paneli (Tam Ekran İçin) */
+        .left-control-panel { display: flex; flex-direction: column; align-items: center; }
+        #appContainer:fullscreen .left-control-panel { max-height: 95vh; overflow-y: auto; padding-right: 5px; }
 
         /* Bölüm Kutuları */
-        .section { background: white; padding: 15px 10px; border-radius: 20px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .section h2 { color: #333; font-size: 18px; margin-bottom: 8px; }
+        .section { background: white; padding: 12px 8px; border-radius: 15px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; }
+        .section h2 { color: #333; font-size: 16px; margin-bottom: 6px; }
 
         /* Şablon Seçim Butonları */
-        .template-group { display: flex; justify-content: center; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
-        .tpl-btn { background: #ab47bc; color: white; border: none; padding: 6px 12px; font-size: 12px; font-weight: bold; border-radius: 15px; cursor: pointer; }
+        .template-group { display: flex; justify-content: center; gap: 5px; margin-bottom: 8px; flex-wrap: wrap; }
+        .tpl-btn { background: #ab47bc; color: white; border: none; padding: 5px 10px; font-size: 11px; font-weight: bold; border-radius: 12px; cursor: pointer; }
         .tpl-btn.active { background: #7b1fa2; transform: scale(1.05); }
 
         /* Renk Paleti ve Özel Renk */
-        .palette { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-        .color-box { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .palette { display: flex; justify-content: center; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+        .color-box { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .color-box.active { border: 3px solid #333; transform: scale(1.15); }
-        .custom-color-picker { width: 35px; height: 35px; border: none; border-radius: 50%; cursor: pointer; padding: 0; background: none; }
+        .custom-color-picker { width: 30px; height: 30px; border: none; border-radius: 50%; cursor: pointer; padding: 0; background: none; }
 
         /* Araçlar ve Kalem Boyutları */
-        .tools { margin: 8px 0; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
-        .tool-btn { background: #ff9800; color: white; border: none; padding: 7px 12px; font-size: 12px; font-weight: bold; border-radius: 20px; cursor: pointer; }
+        .tools { margin: 6px 0; display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
+        .tool-btn { background: #ff9800; color: white; border: none; padding: 6px 10px; font-size: 11px; font-weight: bold; border-radius: 15px; cursor: pointer; }
         .tool-btn.size-btn { background: #607d8b; }
         .tool-btn.size-btn.active-size { background: #263238; border: 2px solid #ffeb3b; }
         .tool-btn.eraser { background: #78909c; }
@@ -42,103 +78,105 @@
         .tool-btn.eyedropper { background: #00897b; }
         .tool-btn.eyedropper.active-eyedropper { background: #004d40; border: 2px solid #ffeb3b; }
         .tool-btn.stamp { background: #d81b60; }
-        .tool-btn.stamp.active-stamp { background: #880e4f; border: 2px solid #ffeb3b; }
         .tool-btn.fullscreen { background: #3f51b5; }
         .tool-btn.clear { background: #e53935; }
 
-        /* Tuval Alanı ve Tam Ekran Düzeni */
-        .canvas-container { position: relative; display: inline-block; width: 100%; max-width: 480px; }
-        canvas { background: #fff; border: 3px dashed #ffb74d; border-radius: 15px; width: 100%; max-width: 480px; height: 340px; touch-action: none; cursor: crosshair; display: block; margin: 0 auto; }
+        /* Tuval Alanı ve Tam Ekran Boyutlandırma */
+        .canvas-container { position: relative; display: inline-block; width: 100%; }
+        canvas { background: #fff; border: 3px dashed #ffb74d; border-radius: 15px; width: 100%; max-width: 460px; height: 310px; touch-action: none; cursor: crosshair; display: block; margin: 0 auto; }
         
-        /* Tam Ekran Modu CSS Sınıfı */
-        .canvas-container:fullscreen { width: 100vw; height: 100vh; background: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; }
-        .canvas-container:fullscreen canvas { max-width: 90vw; height: 75vh; border: none; box-shadow: 0 0 20px rgba(0,0,0,0.2); }
+        #appContainer:fullscreen canvas { max-width: none; width: 62vw; height: 85vh; border: 3px solid #ffb74d; }
 
-        /* Büyük İsim Girişi */
-        input[type="text"] { padding: 12px; font-size: 18px; border: 3px solid #ffcc80; border-radius: 20px; width: 95%; max-width: 450px; margin: 12px 0 8px 0; text-align: center; font-weight: bold; color: #ff5722; background: #fffdf9; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        /* Çocuk İsmi Girişi */
+        input[type="text"] { padding: 8px; font-size: 15px; border: 3px solid #ffcc80; border-radius: 15px; width: 95%; max-width: 440px; margin: 8px 0 6px 0; text-align: center; font-weight: bold; color: #ff5722; background: #fffdf9; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         
         /* Genel Butonlar */
-        .btn { background: #2196f3; color: white; border: none; padding: 12px 20px; font-size: 15px; font-weight: bold; border-radius: 30px; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 4px 10px rgba(33,150,243,0.3); transition: 0.2s; margin: 6px 4px; width: 90%; max-width: 320px; text-align: center; }
+        .btn { background: #2196f3; color: white; border: none; padding: 10px 16px; font-size: 14px; font-weight: bold; border-radius: 25px; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 4px 10px rgba(33,150,243,0.3); transition: 0.2s; margin: 5px 4px; width: 90%; max-width: 300px; text-align: center; }
         .btn:hover { transform: scale(1.02); }
         .btn.boyama1 { background: #4caf50; }
         .btn.boyama2 { background: #ff9800; }
         .btn.indir { background: #e91e63; }
 
-        .library-group { display: flex; flex-direction: column; gap: 8px; align-items: center; margin-top: 5px; }
+        .library-section { background: white; padding: 12px; border-radius: 15px; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        #appContainer:fullscreen .library-section { display: none; } /* Tam ekranda PDF indirme alanı gizlenir, odağı boyamaya verir */
     </style>
 </head>
 <body>
 
-    <!-- ÜST BİLGİ -->
-    <header>
-        <h1>🎨 Minik Sanatçı Boyama Dünyası</h1>
-        <p>Dijital Tuval ve Boyama Kitapları!</p>
-    </header>
+    <!-- TÜM UYGULAMA KAPSAYICISI (Tam Ekran Buraya Tetiklenir) -->
+    <div id="appContainer">
 
-    <!-- DİJİTAL BOYAMA TUVALİ -->
-    <div class="section">
-        <h2>✨ Akıllı Boyama Tuvali</h2>
-        
-        <!-- Şablon Seçimi -->
-        <div class="template-group">
-            <button class="tpl-btn active" onclick="setTemplate('house', this)">🏠 Ev & Bahçe</button>
-            <button class="tpl-btn" onclick="setTemplate('cat', this)">🐱 Sevimli Kedi</button>
-            <button class="tpl-btn" onclick="setTemplate('rocket', this)">🚀 Uzay Roketi</button>
+        <!-- Sol veya Üst Kontrol Paneli -->
+        <div class="left-control-panel">
+            <header>
+                <h1>🎨 Minik Sanatçı Boyama Dünyası</h1>
+                <p>Dijital Tuval ve Boyama Kitapları!</p>
+            </header>
+
+            <div class="section">
+                <h2>✨ Akıllı Boyama Tuvali</h2>
+                
+                <!-- Şablon Seçimi -->
+                <div class="template-group">
+                    <button class="tpl-btn active" onclick="setTemplate('house', this)">🏠 Ev & Bahçe</button>
+                    <button class="tpl-btn" onclick="setTemplate('cat', this)">🐱 Sevimli Kedi</button>
+                    <button class="tpl-btn" onclick="setTemplate('rocket', this)">🚀 Uzay Roketi</button>
+                </div>
+
+                <!-- Renk Paleti ve Özel Renk Seçici -->
+                <div class="palette">
+                    <div class="color-box active" style="background: #ff5722;" onclick="selectColor('#ff5722', this)"></div>
+                    <div class="color-box" style="background: #4caf50;" onclick="selectColor('#4caf50', this)"></div>
+                    <div class="color-box" style="background: #2196f3;" onclick="selectColor('#2196f3', this)"></div>
+                    <div class="color-box" style="background: #ffeb3b;" onclick="selectColor('#ffeb3b', this)"></div>
+                    <div class="color-box" style="background: #9c27b0;" onclick="selectColor('#9c27b0', this)"></div>
+                    <div class="color-box" style="background: #e91e63;" onclick="selectColor('#e91e63', this)"></div>
+                    <input type="color" class="custom-color-picker" title="Özel Renk Seç" value="#ff5722" onchange="selectColor(this.value, null)">
+                </div>
+
+                <!-- Gelişmiş Araçlar ve Kalem Kalınlıkları -->
+                <div class="tools">
+                    <button class="tool-btn size-btn active-size" id="sizeThin" onclick="setLineWidth(3, this)">✏️ İnce</button>
+                    <button class="tool-btn size-btn" id="sizeNormal" onclick="setLineWidth(8, this)">🖊️ Normal</button>
+                    <button class="tool-btn size-btn" id="sizeThick" onclick="setLineWidth(16, this)">🖌 Kalın</button>
+                    <button class="tool-btn undo-redo" onclick="undoAction()">↩️ Geri Al</button>
+                    <button class="tool-btn undo-redo" onclick="redoAction()">🔁 İleri</button>
+                </div>
+                <div class="tools">
+                    <button class="tool-btn bucket" id="bucketBtn" onclick="enableBucket()">🪣 Dolgu</button>
+                    <button class="tool-btn eyedropper" id="eyedropperBtn" onclick="enableEyedropper()">💧 Damlalık</button>
+                    <button class="tool-btn stamp" onclick="enableStamp('⭐')">⭐ Yıldız</button>
+                    <button class="tool-btn stamp" onclick="enableStamp('❤️')">❤️ Kalp</button>
+                    <button class="tool-btn eraser" onclick="enableEraser(this)">🧽 Silgi</button>
+                </div>
+                <div class="tools">
+                    <button class="tool-btn fullscreen" onclick="toggleFullScreen()">⛶ Tam Ekran / Yatay</button>
+                    <button class="tool-btn clear" onclick="clearCanvas()">🗑️ Temizle</button>
+                </div>
+
+                <!-- Büyük İsim Girişi -->
+                <input type="text" id="childName" placeholder="Adını Buraya Yaz (Harfleri Boya!)" oninput="redrawEverything()">
+            </div>
+
+            <!-- Yazıcı İçin Boyama Kitapları Bölümü -->
+            <div class="library-section">
+                <h2>📚 Yazıcı İçin Boyama Kitapları</h2>
+                <div class="tools" style="margin-top: 8px;">
+                    <a href="boyama-kitap-01.pdf" class="btn boyama1" target="_blank" style="width: 48%; font-size: 12px; padding: 8px;">🖍️ Kitap 1 (PDF)</a>
+                    <a href="boyama-kitap-02.pdf" class="btn boyama2" target="_blank" style="width: 48%; font-size: 12px; padding: 8px;">🖍️ Kitap 2 (PDF)</a>
+                </div>
+            </div>
         </div>
 
-        <!-- Renk Paleti ve Özel Renk Seçici -->
-        <div class="palette">
-            <div class="color-box active" style="background: #ff5722;" onclick="selectColor('#ff5722', this)"></div>
-            <div class="color-box" style="background: #4caf50;" onclick="selectColor('#4caf50', this)"></div>
-            <div class="color-box" style="background: #2196f3;" onclick="selectColor('#2196f3', this)"></div>
-            <div class="color-box" style="background: #ffeb3b;" onclick="selectColor('#ffeb3b', this)"></div>
-            <div class="color-box" style="background: #9c27b0;" onclick="selectColor('#9c27b0', this)"></div>
-            <div class="color-box" style="background: #e91e63;" onclick="selectColor('#e91e63', this)"></div>
-            <!-- Özel Renk Paletten Seç -->
-            <input type="color" class="custom-color-picker" title="Özel Renk Seç" value="#ff5722" onchange="selectColor(this.value, null)">
+        <!-- Sağ Taraf: Tuval ve İndir Butonu Alanı -->
+        <div class="right-canvas-panel">
+            <div class="canvas-container" id="canvasContainer">
+                <canvas id="paintCanvas" width="460" height="310"></canvas>
+            </div>
+            <br>
+            <button class="btn indir" onclick="downloadImage()">📸 Boyadığımı İndir & Kutla 🎉</button>
         </div>
 
-        <!-- Gelişmiş Araçlar ve Kalem Kalınlıkları -->
-        <div class="tools">
-            <button class="tool-btn size-btn active-size" id="sizeThin" onclick="setLineWidth(3, this)">✏️ İnce</button>
-            <button class="tool-btn size-btn" id="sizeNormal" onclick="setLineWidth(8, this)">🖊️ Normal</button>
-            <button class="tool-btn size-btn" id="sizeThick" onclick="setLineWidth(16, this)">🖌️️ Kalın</button>
-            <button class="tool-btn undo-redo" onclick="undoAction()">↩️ Geri Al</button>
-            <button class="tool-btn undo-redo" onclick="redoAction()">🔁 İleri</button>
-        </div>
-        <div class="tools">
-            <button class="tool-btn bucket" id="bucketBtn" onclick="enableBucket()">🪣 Dolgu</button>
-            <button class="tool-btn eyedropper" id="eyedropperBtn" onclick="enableEyedropper()">💧 Damlalık</button>
-            <button class="tool-btn stamp" id="stampBtn" onclick="enableStamp('⭐')">⭐ Yıldız</button>
-            <button class="tool-btn stamp" id="stampBtn2" onclick="enableStamp('❤️')">❤️ Kalp</button>
-            <button class="tool-btn eraser" onclick="enableEraser(this)">🧽 Silgi</button>
-        </div>
-        <div class="tools">
-            <button class="tool-btn fullscreen" onclick="toggleFullScreen()">⛶ Tam Ekran / Yatay</button>
-            <button class="tool-btn clear" onclick="clearCanvas()">🗑️ Temizle</button>
-        </div>
-
-        <!-- Çok Daha Büyük Çocuk İsmi Girişi -->
-        <input type="text" id="childName" placeholder="Adını Buraya Yaz (Harfleri Boya!)" oninput="redrawEverything()">
-
-        <!-- Tuval Alanı (Tam Ekran Wrapper İçinde) -->
-        <div class="canvas-container" id="canvasContainer">
-            <canvas id="paintCanvas" width="480" height="340"></canvas>
-        </div>
-        
-        <br>
-        <button class="btn indir" onclick="downloadImage()">📸 Boyadığımı İndir & Kutla 🎉</button>
-    </div>
-
-    <!-- BOYAMA KİTAPLARI İNDİRME ALANI -->
-    <div class="section">
-        <h2>📚 Yazıcı İçin Boyama Kitapları</h2>
-        <p>İstediğin boyama kitabını tek tıkla indir!</p>
-        
-        <div class="library-group">
-            <a href="boyama-kitap-01.pdf" class="btn boyama1" target="_blank">🖍️ Boyama Kitabı 1 (PDF)</a>
-            <a href="boyama-kitap-02.pdf" class="btn boyama2" target="_blank">🖍️ Boyama Kitabı 2 (PDF)</a>
-        </div>
     </div>
 
     <script>
@@ -148,17 +186,15 @@
         let currentColor = '#ff5722';
         let currentLineWidth = 3; 
         let currentTemplate = 'house';
-        let activeTool = 'brush'; // 'brush', 'bucket', 'eraser', 'eyedropper', 'stamp'
+        let activeTool = 'brush'; 
         let currentStampChar = '⭐';
 
-        // Geri Al / İleri Al (Undo / Redo) Tarihçesi
         let historySteps = [];
         let historyStepIndex = -1;
 
-        // Kullanıcının çizim katmanı
         let userCanvas = document.createElement('canvas');
-        userCanvas.width = 480;
-        userCanvas.height = 340;
+        userCanvas.width = 460;
+        userCanvas.height = 310;
         let userCtx = userCanvas.getContext('2d');
 
         function playPopSound() {
@@ -185,11 +221,10 @@
         resetUserCanvas();
 
         function saveState() {
-            // İleri adımları temizle ve yeni adımı kaydet
             historySteps = historySteps.slice(0, historyStepIndex + 1);
             historySteps.push(userCtx.getImageData(0, 0, userCanvas.width, userCanvas.height));
             historyStepIndex++;
-            if (historySteps.length > 20) { // Bellek koruması için max 20 adım
+            if (historySteps.length > 20) {
                 historySteps.shift();
                 historyStepIndex--;
             }
@@ -218,54 +253,41 @@
             ctx.strokeStyle = '#333';
 
             if (currentTemplate === 'house') {
-                // Güneş
-                ctx.beginPath(); ctx.arc(80, 55, 25, 0, Math.PI * 2); ctx.fillStyle = '#fff9c4'; ctx.fill(); ctx.stroke();
-                // Bulut
-                ctx.beginPath(); ctx.arc(370, 60, 15, 0, Math.PI * 2); ctx.arc(390, 60, 20, 0, Math.PI * 2); ctx.arc(410, 60, 15, 0, Math.PI * 2); ctx.stroke();
-                // Ev Gövdesi
-                ctx.strokeRect(160, 130, 160, 120);
-                // Çatı
-                ctx.beginPath(); ctx.moveTo(135, 130); ctx.lineTo(240, 60); ctx.lineTo(345, 130); ctx.closePath(); ctx.stroke();
-                // Kapı
-                ctx.strokeRect(215, 180, 50, 70);
-                // Pencereler
-                ctx.strokeRect(180, 150, 30, 30);
-                ctx.strokeRect(270, 150, 30, 30);
+                ctx.beginPath(); ctx.arc(75, 45, 20, 0, Math.PI * 2); ctx.fillStyle = '#fff9c4'; ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(355, 50, 13, 0, Math.PI * 2); ctx.arc(375, 50, 17, 0, Math.PI * 2); ctx.arc(395, 50, 13, 0, Math.PI * 2); ctx.stroke();
+                ctx.strokeRect(150, 110, 160, 110);
+                ctx.beginPath(); ctx.moveTo(125, 110); ctx.lineTo(230, 45); ctx.lineTo(335, 110); ctx.closePath(); ctx.stroke();
+                ctx.strokeRect(205, 160, 50, 60);
+                ctx.strokeRect(170, 130, 30, 30);
+                ctx.strokeRect(260, 130, 30, 30);
             } else if (currentTemplate === 'cat') {
-                ctx.beginPath(); ctx.arc(240, 160, 75, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.stroke();
-                // Kulaklar
-                ctx.beginPath(); ctx.moveTo(185, 115); ctx.lineTo(175, 55); ctx.lineTo(225, 100); ctx.closePath(); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(295, 115); ctx.lineTo(305, 55); ctx.lineTo(255, 100); ctx.closePath(); ctx.stroke();
-                // Gözler ve Burun
-                ctx.beginPath(); ctx.arc(210, 145, 8, 0, Math.PI * 2); ctx.fillStyle = '#333'; ctx.fill();
-                ctx.beginPath(); ctx.arc(270, 145, 8, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.arc(240, 165, 5, 0, Math.PI * 2); ctx.fill();
-                // Bıyıklar
-                ctx.beginPath(); ctx.moveTo(175, 170); ctx.lineTo(135, 162); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(175, 185); ctx.lineTo(135, 190); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(305, 170); ctx.lineTo(345, 162); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(305, 185); ctx.lineTo(345, 190); ctx.stroke();
+                ctx.beginPath(); ctx.arc(230, 140, 65, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(180, 95); ctx.lineTo(170, 45); ctx.lineTo(215, 85); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(280, 95); ctx.lineTo(290, 45); ctx.lineTo(245, 85); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(205, 125, 7, 0, Math.PI * 2); ctx.fillStyle = '#333'; ctx.fill();
+                ctx.beginPath(); ctx.arc(255, 125, 7, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(230, 145, 4, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(170, 150); ctx.lineTo(130, 142); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(170, 162); ctx.lineTo(130, 165); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(290, 150); ctx.lineTo(330, 142); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(290, 162); ctx.lineTo(330, 165); ctx.stroke();
             } else if (currentTemplate === 'rocket') {
-                ctx.beginPath(); ctx.arc(240, 120, 40, Math.PI, 0, false); ctx.lineTo(280, 210); ctx.lineTo(200, 210); ctx.closePath(); ctx.stroke();
-                // Kanatlar
-                ctx.beginPath(); ctx.moveTo(200, 170); ctx.lineTo(165, 210); ctx.lineTo(200, 210); ctx.closePath(); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(280, 170); ctx.lineTo(315, 210); ctx.lineTo(280, 210); ctx.closePath(); ctx.stroke();
-                // Pencere
-                ctx.beginPath(); ctx.arc(240, 115, 14, 0, Math.PI * 2); ctx.stroke();
-                // Alevler
-                ctx.beginPath(); ctx.moveTo(220, 210); ctx.lineTo(240, 250); ctx.lineTo(260, 210); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(230, 105, 35, Math.PI, 0, false); ctx.lineTo(265, 180); ctx.lineTo(195, 180); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(195, 145); ctx.lineTo(165, 180); ctx.lineTo(195, 180); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(265, 145); ctx.lineTo(295, 180); ctx.lineTo(265, 180); ctx.closePath(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(230, 100, 12, 0, Math.PI * 2); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(215, 180); ctx.lineTo(230, 215); ctx.lineTo(245, 180); ctx.closePath(); ctx.stroke();
             }
 
-            // Çocuğun İsmi (Daha Büyük Harf Boyama Yazısı)
             const nameInput = document.getElementById('childName').value.trim().toUpperCase();
             const displayName = nameInput !== "" ? nameInput : "SANATÇI";
             
-            ctx.font = "bold 30px Arial";
+            ctx.font = "bold 26px Arial";
             ctx.textAlign = "center";
             ctx.lineWidth = 1.5;
             ctx.strokeStyle = "#333";
             ctx.fillStyle = "rgba(0,0,0,0)";
-            ctx.strokeText(displayName, canvas.width / 2, 305);
+            ctx.strokeText(displayName, canvas.width / 2, 275);
         }
 
         function redrawEverything() {
@@ -314,7 +336,6 @@
                 clientX = e.touches[0].clientX;
                 clientY = e.touches[0].clientY;
             }
-            // Tam ekran oran optimizasyonu
             let scaleX = canvas.width / rect.width;
             let scaleY = canvas.height / rect.height;
             return { 
@@ -323,7 +344,6 @@
             };
         }
 
-        // Akıllı Flood Fill (Kova Dolgu)
         function floodFill(startX, startY, fillColorHex) {
             redrawEverything();
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -384,11 +404,9 @@
             saveState();
         }
 
-        // Damlalık (Eyedropper) Fonksiyonu
         function pickColor(x, y) {
             redrawEverything();
             const pixel = ctx.getImageData(x, y, 1, 1).data;
-            // Eğer siyah çizgiye tıklandıysa renk seçme
             if (pixel[0] < 50 && pixel[1] < 50 && pixel[2] < 50) return;
             
             const hex = "#" + ((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2]).toString(16).slice(1);
@@ -397,9 +415,8 @@
             playPopSound();
         }
 
-        // Pul / Damga (Stamp) Bırakma Fonksiyonu
         function placeStamp(x, y, char) {
-            userCtx.font = "32px Arial";
+            userCtx.font = "28px Arial";
             userCtx.textAlign = "center";
             userCtx.textBaseline = "middle";
             userCtx.fillText(char, x, y);
@@ -503,8 +520,8 @@
         }
 
         function toggleFullScreen() {
-            const container = document.getElementById('canvasContainer');
-            if (!document.fullscreenElement) {
+            const container = document.getElementById('appContainer');
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
                 if (container.requestFullscreen) {
                     container.requestFullscreen();
                 } else if (container.webkitRequestFullscreen) {
@@ -513,6 +530,8 @@
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
                 }
             }
             playPopSound();
