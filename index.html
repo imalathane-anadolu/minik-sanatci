@@ -211,7 +211,7 @@
         .canvas-wrapper {
             position: relative;
             width: 100%;
-            height: 62vh; /* Çizim alanı büyütüldü, parmakla rahat çizim için optimize edildi */
+            height: 62vh;
             background: #ffffff;
             border: 3px solid #dfe4ea;
             border-radius: 12px;
@@ -310,6 +310,11 @@
             box-shadow: none;
         }
 
+        .action-btn.undo {
+            background: #ffa502;
+            box-shadow: 0 2px 0 #e67e22;
+        }
+
         .action-btn.clear {
             background: #ff4757;
             box-shadow: 0 2px 0 #ff3838;
@@ -389,6 +394,7 @@
 
             <!-- Eylem Butonları -->
             <div class="action-bar">
+                <button class="action-btn undo" onclick="undo()">↩️ Geri Al</button>
                 <button class="action-btn clear" onclick="clearCanvas()">🗑️ Temizle</button>
                 <button class="action-btn fullscreen" onclick="toggleFullScreen()">📺 Tam Ekran</button>
                 <button class="action-btn" onclick="saveImage()">💾 Kaydet</button>
@@ -428,6 +434,10 @@
         let isDrawing = false;
         let lastX = 0;
         let lastY = 0;
+
+        // Geri Al (Undo) için geçmiş dizisi
+        let undoHistory = [];
+        const maxHistorySteps = 15;
 
         const colors = [
             '#000000', '#ffffff', '#ff4757', '#ff6b81', '#ffa502', '#fffa65', 
@@ -478,6 +488,22 @@
             }
         }
 
+        // Adımı geçmişe kaydet
+        function saveState() {
+            if (undoHistory.length >= maxHistorySteps) {
+                undoHistory.shift();
+            }
+            undoHistory.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+        }
+
+        // Geri Al fonksiyonu
+        function undo() {
+            if (undoHistory.length > 0) {
+                const previousState = undoHistory.pop();
+                ctx.putImageData(previousState, 0, 0);
+            }
+        }
+
         function setTool(tool) {
             currentTool = tool;
             document.querySelectorAll('.tool-btn').forEach(btn => {
@@ -494,6 +520,7 @@
         }
 
         function clearCanvas() {
+            saveState();
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
@@ -513,6 +540,7 @@
         }
 
         function startDraw(e) {
+            saveState(); // Çizim başlamadan önceki hali hafızaya at
             const pos = getMousePos(e);
             lastX = pos.x;
             lastY = pos.y;
