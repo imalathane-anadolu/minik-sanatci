@@ -84,26 +84,10 @@
 
     <div id="appContainer">
 
-        <div class="right-canvas-panel">
-            <header style="margin-bottom: 8px;">
-                <div class="header-title-area">
-                    <h1>🎨 Kendin Çiz & Boya</h1>
-                    <p>50 Farklı Eğlenceli Şablon Arşivi</p>
-                </div>
-                <button class="tool-btn fullscreen" onclick="toggleFullScreen()">⛶ Tam Ekran</button>
-            </header>
-            <div class="canvas-container" id="canvasContainer">
-                <canvas id="paintCanvas" width="460" height="310"></canvas>
-            </div>
-            <!-- Kaydet / Kutla Butonu Tuvalin Hemen Altında -->
-            <div style="width: 100%; margin-top: 10px;">
-                <button class="btn indir" onclick="downloadImage()">📸 Şaheseri Kaydet & Kutla 🎉</button>
-            </div>
-        </div>
-
+        <!-- Sol Kontrol Paneli (Boyama Kitapları Artık En Üstte) -->
         <div class="left-control-panel">
             <!-- Boyama Kitapları (PDF) Menüsü En Üstte -->
-            <div class="library-section">
+            <div class="library-section" style="margin-bottom: 10px;">
                 <h2>📚 Boyama Kitapları</h2>
                 <div style="font-size: 26px; margin: 2px 0;">🧸🎨✨</div>
                 <div class="tools" style="margin-top: 4px;">
@@ -141,7 +125,7 @@
                     <button class="tool-btn bucket" id="bucketBtn" onclick="enableBucket()">🪣 Dolgu</button>
                     <button class="tool-btn eyedropper" id="eyedropperBtn" onclick="enableEyedropper()">🎨 Renk Seç</button>
                     <button class="tool-btn stamp" onclick="enableStamp('⭐')">⭐ Yıldız</button>
-                    <button class="tool-btn stamp" onclick="enableStamp('❤️️')">❤️ Kalp</button>
+                    <button class="tool-btn stamp" onclick="enableStamp('❤')">❤️ Kalp</button>
                     <button class="tool-btn eraser" onclick="enableEraser()">🧽 Silgi</button>
                 </div>
 
@@ -150,6 +134,24 @@
                 </div>
 
                 <input type="text" id="childName" placeholder="Sanatçının Adı" oninput="redrawEverything()">
+            </div>
+        </div>
+
+        <!-- Sağ Tuval Paneli -->
+        <div class="right-canvas-panel">
+            <header style="margin-bottom: 8px;">
+                <div class="header-title-area">
+                    <h1>🎨 Kendin Çiz & Boya</h1>
+                    <p>50 Farklı Eğlenceli Şablon Arşivi</p>
+                </div>
+                <button class="tool-btn fullscreen" onclick="toggleFullScreen()">⛶ Tam Ekran</button>
+            </header>
+            <div class="canvas-container" id="canvasContainer">
+                <canvas id="paintCanvas" width="460" height="310"></canvas>
+            </div>
+            <!-- Kaydet / Kutla Butonu Tuvalin Hemen Altında -->
+            <div style="width: 100%; margin-top: 10px;">
+                <button class="btn indir" onclick="downloadImage()">📸 Şaheseri Kaydet & Kutla 🎉</button>
             </div>
         </div>
 
